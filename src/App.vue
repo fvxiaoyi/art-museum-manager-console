@@ -103,6 +103,7 @@ export default {
     padding: 0;
     margin: 0;
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    color: #606266;
   }
 
   .clear:after{
@@ -187,7 +188,7 @@ export default {
   }
 
   #contentWrap {
-    width: 100%;
+    
     padding: 10px;
     flex: 1;
   }
