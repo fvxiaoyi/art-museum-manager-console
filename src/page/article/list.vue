@@ -18,7 +18,6 @@ export default {
 
 <style scoped>
   #article-list {
-    background-color: #EBEDEF;
     height: 100%;
     overflow: auto;
     overflow-x: hidden;

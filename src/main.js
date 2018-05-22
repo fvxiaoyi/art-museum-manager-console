@@ -10,6 +10,12 @@ Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 
+let screenHeight = window.screen.height
+let pageSize = screenHeight < 1050 ? screenHeight < 900 ? 6 : 8 : 10
+Vue.prototype.$pageSize = pageSize
+
+Vue.prototype.$UISize = screenHeight < 900 ? 'small' : 'normal'
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

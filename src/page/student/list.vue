@@ -76,7 +76,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
-      :page-size="6"
+      :page-size="pageSize"
       :total="total">
     </el-pagination>
 
@@ -174,6 +174,26 @@ export default {
         activeCode: 'A3B4',
         lock: false,
         createTime: Date.now()
+      },
+      {
+        id: 7,
+        name: '张三',
+        parentName: '李四',
+        phone: '123456789',
+        active: true,
+        activeCode: 'A3B4',
+        lock: false,
+        createTime: Date.now()
+      },
+      {
+        id: 8,
+        name: '张三',
+        parentName: '李四',
+        phone: '123456789',
+        active: true,
+        activeCode: 'A3B4',
+        lock: false,
+        createTime: Date.now()
       }]
     }
   },
@@ -258,6 +278,11 @@ export default {
         })
       }).catch(() => {       
       })
+    }
+  },
+  computed: {
+    pageSize() {
+      return this.$pageSize
     }
   }
 }

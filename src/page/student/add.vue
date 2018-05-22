@@ -17,7 +17,9 @@
         </el-form-item>
       </el-form>
       <el-button @click="cancel">取 消</el-button>
-      <el-button type="primary" @click="create">创 建</el-button>
+      <el-tooltip slot="append" content="创建学员,并获得激活码" placement="right" >
+        <el-button type="primary" @click="create">创 建</el-button>
+      </el-tooltip>
     </div>
     <div v-else class="code-wrap">
       <i class="el-icon-success"></i>
