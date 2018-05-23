@@ -56,7 +56,7 @@
     </div>
     <div id="login-wrap" v-else>
       <div class="login-text">
-        <div :class="['logo', UISize == 'normal' ? 'logo-normal' : 'logo-small']">logo</div>
+        <div class="logo">logo</div>
         <div class="text">
           <span class="title" style="color:#1CBAD2;">美</span><span class="title" style="color:#9FCC3B;">学</span><span class="title" style="color:#FFE71A;">艺</span><span class="title" style="color:#FF89B0;">术</span><span class="title" style="color:#FF7C7C;">馆</span>
           <span class="title" style="color:#999;">-</span>
@@ -65,7 +65,7 @@
         <div class="copyright">XXXXX @2018 All rights reserved</div>
       </div>
       <div class="login-form">
-        <div :class="['form-wrap', UISize == 'normal' ? 'form-wrap-normal' : 'form-wrap-small']" >
+        <div class="form-wrap" >
           <div style="margin-bottom:16px;">登录</div>
           <el-input style="margin-bottom:10px;" placeholder="请输入账号" v-model="account">
             <template slot="prepend">账号</template>
@@ -139,9 +139,6 @@ export default {
   computed: {
     token() {
       return sessionStorage.getItem("token")
-    },
-    UISize() {
-      return this.$UISize
     }
   }
 }
@@ -155,6 +152,51 @@ export default {
     margin: 0;
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
     color: #606266;
+  }
+
+  @media screen and (min-height: 800px){
+    #login-wrap .login-text span {
+      font-weight: bold;
+      font-size: 60px;
+    }
+
+    #login-wrap .login-text .logo {
+      margin: 20px 0 200px 0;
+      width: 100px;
+      height: 100px;
+      background-color: orange;
+    }
+
+    #login-wrap .login-form .form-wrap {
+      margin: 280px 0 0 120px; 
+      padding: 20px;
+      height: 180px;
+      width: 350px;
+      border: 1px solid #DCDFE6;
+    }
+    
+  }
+
+  @media screen and (max-height: 800px){
+    #login-wrap .login-text span {
+      font-weight: bold;
+      font-size: 40px;
+    }
+
+    #login-wrap .login-text .logo {
+      margin: 20px 0 100px 0;
+      width: 100px;
+      height: 100px;
+      background-color: orange;
+    }
+
+    #login-wrap .login-form .form-wrap {
+      margin: 180px 0 0 120px; 
+      padding: 20px;
+      height: 180px;
+      width: 350px;
+      border: 1px solid #DCDFE6;
+    }
   }
 
   .clear:after{
@@ -185,26 +227,6 @@ export default {
     flex-direction: column;
   }
 
-  #login-wrap .login-text span {
-    font-weight: bold;
-    font-size: 40px;
-  }
-
-  #login-wrap .login-text .logo {
-    margin-top: 20px;
-    width: 100px;
-    height: 100px;
-    background-color: orange;
-  }
-
-  #login-wrap .login-text .logo-small {
-    margin-bottom: 100px;
-  }
-
-  #login-wrap .login-text .logo-normal {
-    margin-bottom: 200px;
-  }
-
   #login-wrap .login-text .text {
     text-align: center;
     flex: 1;
@@ -219,22 +241,6 @@ export default {
   #login-wrap .login-form {
     height: 100%;
     flex: 1;
-  }
-
-  #login-wrap .login-form .form-wrap {
-    margin-left: 120px; 
-    padding: 20px;
-    height: 180px;
-    width: 350px;
-    border: 1px solid #DCDFE6;
-  }
-
-  #login-wrap .login-form .form-wrap-small {
-    margin-top: 180px;
-  }
-
-   #login-wrap .login-form .form-wrap-normal {
-    margin-top: 280px;
   }
 
   #app-wrap {
