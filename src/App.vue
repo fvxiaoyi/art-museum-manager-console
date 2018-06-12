@@ -63,7 +63,6 @@
     </div>
     <div id="login-wrap" v-else>
       <div class="login-text">
-        <div class="logo">logo</div>
         <div class="text">
           <span class="title" style="color:#1CBAD2;">美</span><span class="title" style="color:#9FCC3B;">学</span><span class="title" style="color:#FFE71A;">艺</span><span class="title" style="color:#FF89B0;">术</span><span class="title" style="color:#FF7C7C;">馆</span>
           <span class="title" style="color:#999;">-</span>
@@ -167,11 +166,8 @@ export default {
       font-size: 60px;
     }
 
-    #login-wrap .login-text .logo {
-      margin: 20px 0 200px 0;
-      width: 100px;
-      height: 100px;
-      background-color: orange;
+    #login-wrap .login-text .text {
+      margin-top: 340px;
     }
 
     #login-wrap .login-form .form-wrap {
@@ -190,11 +186,8 @@ export default {
       font-size: 40px;
     }
 
-    #login-wrap .login-text .logo {
-      margin: 20px 0 100px 0;
-      width: 100px;
-      height: 100px;
-      background-color: orange;
+    #login-wrap .login-text .text {
+       margin-top: 240px;
     }
 
     #login-wrap .login-form .form-wrap {
