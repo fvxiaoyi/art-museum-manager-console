@@ -2,7 +2,6 @@
   <div id="app">
     <div id="app-wrap"  v-if="token">
       <div id="header" class="clear">
-        <div class="log">64x64 log</div>
         <div class="title">管理控制台</div>
         <div class="info">
           <el-dropdown trigger="click" @command="handleCommand">
@@ -35,8 +34,16 @@
             <span slot="title">学员信息</span>
           </el-menu-item>
           <el-menu-item index="3" @click="onMenuItemClick('coupon')">
-            <i class="el-icon-service"></i>
+            <i class="el-icon-phone-outline"></i>
             <span slot="title">试听券</span>
+          </el-menu-item>
+          <el-menu-item index="4" @click="onMenuItemClick('local')">
+            <i class="el-icon-location-outline"></i>
+            <span slot="title">校区</span>
+          </el-menu-item>
+          <el-menu-item index="4" @click="onMenuItemClick('local')">
+            <i class="el-icon-date"></i>
+            <span slot="title">班级</span>
           </el-menu-item>
         </el-menu>
         <div id="contentWrap">
@@ -256,14 +263,8 @@ export default {
     background-color: #555C63;
   }
 
-  #header .log, #header .title, #header .info  {
+  #header .title, #header .info  {
     height: 100%;
-  }
-
-  #header .log {
-    width: 64px;
-    background-color: orange;
-    float: left;
   }
 
   #header .title {

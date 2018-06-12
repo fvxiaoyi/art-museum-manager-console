@@ -5,6 +5,7 @@ const articleList = () => import('@/page/article/list')
 const studentList = () => import('@/page/student/list')
 const studentAdd = () => import('@/page/student/add')
 const couponList = () => import('@/page/coupon/list')
+const localList = () => import('@/page/local/list')
 
 Vue.use(Router)
 
@@ -25,6 +26,10 @@ export default new Router({
     {
       path: '/coupon',
       component: couponList
+    },
+    {
+      path: '/local',
+      component: localList
     }
   ]
 })

@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import axios from 'axios'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
@@ -10,9 +11,13 @@ Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 
+Vue.prototype.$http = axios
+
 let screenHeight = window.screen.height
 let pageSize = screenHeight < 1050 ? screenHeight < 900 ? 6 : 8 : 10
 Vue.prototype.$pageSize = pageSize
+
+Vue.prototype.$server_uri = 'http://localhost'
 
 /* eslint-disable no-new */
 new Vue({
