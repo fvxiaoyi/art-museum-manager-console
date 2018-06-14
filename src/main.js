@@ -19,6 +19,17 @@ Vue.prototype.$pageSize = pageSize
 
 Vue.prototype.$server_uri = 'http://localhost'
 
+Vue.prototype.loadCourseData = function(cb) {
+	let me = this
+	this.$http.post(`${me.$server_uri}/course/list`, {}).then(function (response) {
+	  if(response.data.success) {
+	  	cb && cb(response.data.data)
+	  } else {
+	    me.$message.error('服务器挂了，联系管理员')
+	  }
+	})
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

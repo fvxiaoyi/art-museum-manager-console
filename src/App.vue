@@ -41,9 +41,9 @@
             <i class="el-icon-location-outline"></i>
             <span slot="title">校区</span>
           </el-menu-item>
-          <el-menu-item index="4" @click="onMenuItemClick('local')">
+          <el-menu-item index="5" @click="onMenuItemClick('subject')">
             <i class="el-icon-date"></i>
-            <span slot="title">班级</span>
+            <span slot="title">专题</span>
           </el-menu-item>
         </el-menu>
         <div id="contentWrap">

@@ -9,7 +9,7 @@
         <el-button type="primary" size="mini" @click="handleAdd" >添加</el-button>
       </div>
     </div>
-    <dir class="search-bar">
+    <div class="search-bar">
       <el-radio-group v-model="status">
         <el-radio :label="0">全部</el-radio>
         <el-radio :label="1">正常</el-radio>
@@ -21,7 +21,7 @@
           <el-button icon="el-icon-search"></el-button>
         </el-tooltip>
       </el-input>
-    </dir>
+    </div>
     <div class="list-wrap">
       <el-table
         :data="list"
@@ -312,7 +312,7 @@ export default {
   }
 
   #student-list .search-bar {
-    padding: 0;
+    margin: 12px 0;
   }
 
   #student-list .list-wrap {
