@@ -10,13 +10,13 @@
       </div>
     </div>
     <div class="search-bar">
-      <el-radio-group v-model="searchParam.status">
+      <el-radio-group v-model="searchParam.hot">
         <el-radio :label="0">全部</el-radio>
-        <el-radio :label="1">推荐</el-radio>
-        <el-radio :label="2">未推荐</el-radio>
+        <el-radio :label="true">推荐</el-radio>
+        <el-radio :label="false">未推荐</el-radio>
       </el-radio-group>
       <div class="searchCourse">
-        <el-select v-model="searchParam.course" placeholder="请选择要过滤的实验室" size="small">
+        <el-select v-model="searchParam.courseId" placeholder="请选择要过滤的实验室" size="small">
           <el-option
             v-for="item in courses"
             :key="item.id"
@@ -25,9 +25,9 @@
           </el-option>
         </el-select>
       </div>
-      <el-input placeholder="输入专题名字识别搜索" v-model="searchParam.searchName" size="small" style="width:350px;margin-left:20px;">
+      <el-input placeholder="输入专题名字识别搜索" v-model="searchParam.name" size="small" style="width:350px;margin-left:20px;">
         <el-tooltip slot="append" content="搜索" placement="right" >
-          <el-button icon="el-icon-search"></el-button>
+          <el-button icon="el-icon-search" @click="search"></el-button>
         </el-tooltip>
       </el-input>
     </div>
@@ -38,19 +38,40 @@
         style="width: 96%">
         <el-table-column prop="name" label="专题名"></el-table-column>
         <el-table-column prop="courseName" label="实验室"></el-table-column>
-        <el-table-column prop="name" label="推荐"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间"></el-table-column>
+        <el-table-column label="推荐">
+          <template slot-scope="scope">
+            <span v-if="scope.row.hot">是</span>
+            <span v-else>否</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间">
+          <template slot-scope="scope">
+            <span>{{ formatCreateTime(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           fixed="right"
           label="操作"
-          width="150">
+          width="180">
           <template slot-scope="scope">
-            <el-button type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" v-if="scope.row.hot" @click="handleHot(scope.row.id, false, scope.$index)">取消推荐</el-button>
+            <el-button type="text" size="small" v-else @click="handleHot(scope.row.id, true, scope.$index)">设为推荐</el-button>
+            <el-button type="text" size="small" @click="eidt(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="small" @click="remove(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+
+    <el-pagination
+      @current-change="onPageChange"
+      background
+      layout="prev, pager, next"
+      :page-size="$pageSize"
+      :total="total"
+      :current-page="currentPage"
+      >
+    </el-pagination>
 
   </div>
 </template>
@@ -66,9 +87,9 @@ export default {
   data () {
     return {
       searchParam: {
-        status: 0,
+        hot: 0,
         name: null,
-        course: null
+        courseId: null
       },
       courses: [],
       list:[],
@@ -78,12 +99,36 @@ export default {
   },
   methods: {
     handleAdd() {
-      this.$router.push('/subject/add')
+      this.$router.push('/subject/view')
     },
     handleRefresh() {
-
+      this.loadData(1)
     },
-    loadData(page) {
+    onPageChange(page) {
+      this.currentPage = page
+      this.getData(page)
+    },
+    search() {
+      this.loadData(1, Object.assign({}, this.searchParam))
+    },
+    handleHot(id, hot, index) {
+      let me = this
+      this.$http.post(`${me.$server_uri}/subject/hot`, { id: id, hot: hot }).then(function (response) {
+        if(response.data.success) {
+          me.$message({
+            message: hot ? '推荐成功' : '取消成功',
+            type: 'success'
+          })
+          me.list[index].hot = hot
+        } else {
+          me.$message({
+            message: response.data.msg,
+            type: 'warning'
+          })
+        }
+      })
+    },
+    loadData(page, _params) {
       let me = this,
         limit = this.$pageSize,
         start
@@ -92,10 +137,52 @@ export default {
       } else {
         start = this.$pageSize * (page - 1)
       }
-      this.$http.post(`${me.$server_uri}/subject/list`, { start, limit }).then(function (response) {
-        me.total = response.data.total
-        me.list = response.data.data
+      let params = { start, limit }
+      if(_params) {
+        for(let x in _params) {
+          if(!_params[x]) {
+            delete _params[x]
+          }
+        }
+        if(_params.hot === 0) {
+          delete _params.hot
+        }
+        if(_params.name) {
+          _params.name = `%${_params.name}%`
+        }
+        Object.assign(params, _params)
+      }
+      this.$http.post(`${me.$server_uri}/subject/list`, params).then(function (response) {
+        if(response.data.success) {
+          me.list = response.data.data
+          me.total = response.data.total
+        } else {
+          me.$message({
+            message: response.data.msg,
+            type: 'warning'
+          })
+        }
       })
+    },
+    remove(id) {
+      let me = this
+      this.$http.post(`${me.$server_uri}/subject/remove/${id}`, {}).then(function (response) {
+        if(response.data.success) {
+          me.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          me.loadData(1)
+        } else {
+          me.$message({
+            message: response.data.msg,
+            type: 'warning'
+          })
+        }
+      })
+    },
+    eidt(id) {
+      this.$router.push(`/subject/view/${id}`)
     }
   }
 }

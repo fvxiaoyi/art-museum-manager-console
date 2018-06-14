@@ -206,14 +206,6 @@ export default {
       }
       return ''
     },
-    formatCreateTime(time) {
-      if(time) {
-        let d = new Date(time)
-        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
-      } else {
-        return ''
-      }
-    },
     handleEdit(model, index) {
       this.studentEditDialogVisible = true
       Object.assign(this.model, model)

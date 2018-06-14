@@ -7,7 +7,7 @@ const studentAdd = () => import('@/page/student/add')
 const couponList = () => import('@/page/coupon/list')
 const localList = () => import('@/page/local/list')
 const subjectList = () => import('@/page/subject/list')
-const subjectAdd = () => import('@/page/subject/add')
+const subjectView = () => import('@/page/subject/view')
 
 Vue.use(Router)
 
@@ -38,8 +38,12 @@ export default new Router({
       component: subjectList
     },
     {
-      path: '/subject/add',
-      component: subjectAdd
+      path: '/subject/view',
+      component: subjectView
+    },
+    {
+      path: '/subject/view/:id',
+      component: subjectView
     }
   ]
 })

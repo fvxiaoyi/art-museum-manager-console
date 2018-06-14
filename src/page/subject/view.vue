@@ -1,11 +1,6 @@
 <template>
-  <div id="subject-add">
-    <div class="tbar clear">
-      <div class="back">
-        <el-tooltip content="返回" placement="bottom" >
-          <el-button type="info" icon="el-icon-arrow-left" plain size="mini" @click="back"></el-button>
-        </el-tooltip>
-      </div>
+  <div id="subject-view">
+    <div class="tbar">
       <div class="title">添加专题</div>
     </div>
 
@@ -15,18 +10,16 @@
         <el-upload
           class="avatar-uploader"
           :action="uploadUrl"
-          :multiple=false
           :show-file-list="false"
-          :before-upload="beforeAvatarUpload"
           :on-success="handleUploadSuccess"
-          :on-change="handleUploadChange">
+          :before-upload="beforeAvatarUpload">
           <img v-if="model.displayImg" :src="model.displayImg" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
       
       <el-form-item label="专题名称" required>
-        <el-input v-model="model.name" placeholder="请输入专题名称"></el-input>
+        <el-input v-model="model.name" placeholder="请输入专题名称" style="width: 24.5%"></el-input>
       </el-form-item>
       <el-form-item label="实验室" required>
         <el-select v-model="model.courseId" placeholder="请选择所属实验室" >
@@ -40,14 +33,15 @@
       </el-form-item>
       <el-form-item label="推荐" required>
         <el-radio-group v-model="model.hot">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
+          <el-radio :label="true">是</el-radio>
+          <el-radio :label="false">否</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="back">返回</el-button>
+        <el-button type="success" @click="submit">提交</el-button>
+      </el-form-item>
       
-      <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="">
-      </el-dialog>
 
     </el-form>
   </div>
@@ -57,15 +51,18 @@
 export default {
   created() {
     let me = this
-    // this.loadCourseData((data) => me.courses = data)
+    this.loadCourseData((data) => me.courses = data)
+    if(me.$route.params.id) {
+      me.loadData(me.$route.params.id);
+    }
   },
   data () {
     return {
       model: {
         name: null,
         courseId: null,
-        displayImg: '../../static/home-Banner-2.png',
-        hot: 0
+        displayImg: null,
+        hot: false
       },
       courses: [],
       dialogImageUrl: '',
@@ -76,11 +73,21 @@ export default {
     back() {
       this.$router.push('/subject')
     },
+    loadData(id) {
+      let me = this
+      this.$http.post(`${me.$server_uri}/subject/get`, {id}).then(function (response) {
+        if(response.data.success) {
+          me.model = response.data.data
+        } else {
+          me.$message({
+            message: response.data.msg,
+            type: 'warning'
+          })
+        }
+      })
+    },
     handleUploadSuccess(response, file, fileList) {
       this.model.displayImg = response.data.original_url
-    },
-    handleUploadChange(file, fileList) {
-      console.log(file);
     },
     beforeAvatarUpload(file) {
       const isLt1M = file.size / 1024 / 1024 < 2
@@ -88,6 +95,39 @@ export default {
         this.$message.error('上传图片大小不能超过 1MB!')
       }
       return isLt1M;
+    },
+    submit() {
+      let me = this
+      if(me.$route.params.id) {
+        this.$http.post(`${me.$server_uri}/subject/maintain`, me.model).then(function (response) {
+          if(response.data.success) {
+            me.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+          } else {
+            me.$message({
+              message: response.data.msg,
+              type: 'warning'
+            })
+          }
+        })
+      } else {
+        this.$http.post(`${me.$server_uri}/subject/add`, me.model).then(function (response) {
+          if(response.data.success) {
+            me.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            me.$router.push('/subject')
+          } else {
+            me.$message({
+              message: response.data.msg,
+              type: 'warning'
+            })
+          }
+        })
+      }
     }
   },
   computed: {
@@ -101,26 +141,20 @@ export default {
 
 
 <style scoped>
-  #subject-add {
+  #subject-view {
     height: 100%;
     overflow: auto;
     overflow-x: hidden;
   }
 
-  #subject-add .tbar {
+  #subject-view .tbar {
     height: 50px;
     line-height: 50px;
     border-bottom: 1px solid #DDDDDD;
     margin-bottom: 12px;
   }
 
-  #subject-add .back {
-    float: left;
-    margin-right: 16px;
-  }
-
-  #subject-add .tbar .title {
-    float: left;
+  #subject-view .tbar .title {
     font-size: 18px;
   }
 

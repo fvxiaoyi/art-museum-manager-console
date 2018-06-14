@@ -30,6 +30,15 @@ Vue.prototype.loadCourseData = function(cb) {
 	})
 }
 
+Vue.prototype.formatCreateTime = function(time) {
+  if(time) {
+    let d = new Date(time)
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
+  } else {
+    return ''
+  }
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

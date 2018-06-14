@@ -82,10 +82,7 @@ export default {
       model: {
         name: null
       },
-      list: [{
-        id: 1,
-        name: '河向东'
-      }]
+      list: []
     }
   },
   methods: {
