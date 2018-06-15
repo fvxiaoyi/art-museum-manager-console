@@ -12,8 +12,8 @@
     <div class="search-bar">
       <el-radio-group v-model="searchParam.hot">
         <el-radio :label="0">全部</el-radio>
-        <el-radio :label="true">推荐</el-radio>
-        <el-radio :label="false">未推荐</el-radio>
+        <el-radio :label="1">推荐</el-radio>
+        <el-radio :label="2">未推荐</el-radio>
       </el-radio-group>
       <div class="searchCourse">
         <el-select v-model="searchParam.courseId" placeholder="请选择要过滤的实验室" size="small">
@@ -81,7 +81,7 @@ export default {
   name: 'subjectList',
   created() {
     let me = this
-    this.loadCourseData((data) => me.courses=data)
+    this.loadCourseData((data) => me.courses = data)
     this.loadData(1)
   },
   data () {
@@ -113,19 +113,12 @@ export default {
     },
     handleHot(id, hot, index) {
       let me = this
-      this.$http.post(`${me.$server_uri}/subject/hot`, { id: id, hot: hot }).then(function (response) {
-        if(response.data.success) {
-          me.$message({
-            message: hot ? '推荐成功' : '取消成功',
-            type: 'success'
-          })
-          me.list[index].hot = hot
-        } else {
-          me.$message({
-            message: response.data.msg,
-            type: 'warning'
-          })
-        }
+      this.post('subject/hot', { id: id, hot: hot }, (response) => {
+        me.$message({
+          message: hot ? '推荐成功' : '取消成功',
+          type: 'success'
+        })
+        me.list[index].hot = hot
       })
     },
     loadData(page, _params) {
@@ -146,39 +139,29 @@ export default {
         }
         if(_params.hot === 0) {
           delete _params.hot
+        } else if(_params.hot === 1) {
+          _params.hot = true
+        } else if(_params.hot === 2) {
+          _params.hot = false
         }
         if(_params.name) {
           _params.name = `%${_params.name}%`
         }
         Object.assign(params, _params)
       }
-      this.$http.post(`${me.$server_uri}/subject/list`, params).then(function (response) {
-        if(response.data.success) {
-          me.list = response.data.data
-          me.total = response.data.total
-        } else {
-          me.$message({
-            message: response.data.msg,
-            type: 'warning'
-          })
-        }
+      this.post('subject/list', params, (response) => {
+        me.list = response.data
+        me.total = response.total
       })
     },
     remove(id) {
       let me = this
-      this.$http.post(`${me.$server_uri}/subject/remove/${id}`, {}).then(function (response) {
-        if(response.data.success) {
-          me.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-          me.loadData(1)
-        } else {
-          me.$message({
-            message: response.data.msg,
-            type: 'warning'
-          })
-        }
+      this.post(`subject/remove/${id}`, {}, (response) => {
+        me.$message({
+          message: '删除成功',
+          type: 'success'
+        })
+        me.loadData(1)
       })
     },
     eidt(id) {

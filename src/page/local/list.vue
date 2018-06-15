@@ -95,27 +95,20 @@ export default {
       } else {
         start = this.$pageSize * (page - 1)
       }
-      this.$http.post(`${me.$server_uri}/local/list`, { start, limit }).then(function (response) {
-        me.total = response.data.total
-        me.list = response.data.data
+      this.post('local/list', { start, limit }, (response) => {
+        me.total = response.total
+        me.list = response.data
       })
     },
     handleAdd() {
       let me = this
-      this.$http.post(`${me.$server_uri}/local/add`, me.model).then(function (response) {
-        if(response.data.success) {
-          me.$message({
-            message: '添加成功',
-            type: 'success'
-          })
-          me.addDialogVisible = false
-          me.getData(me.currentPage)
-        } else {
-          me.$message({
-            message: response.data.msg,
-            type: 'warning'
-          })
-        }
+      this.post('local/add', me.model, (response) => {
+        me.$message({
+          message: '添加成功',
+          type: 'success'
+        })
+        me.addDialogVisible = false
+        me.getData(me.currentPage)
       })
     },
     handleRefresh() {
@@ -124,20 +117,13 @@ export default {
     },
     handleEdit() {
       let me = this
-      this.$http.post(`${me.$server_uri}/local/maintain`, me.model).then(function (response) {
-        if(response.data.success) {
-          me.$message({
-            message: '修改成功',
-            type: 'success'
-          })
-          Object.assign(me.list[me.editIndex], me.model)
-          me.editDialogVisible = false
-        } else {
-          me.$message({
-            message: response.data.msg,
-            type: 'warning'
-          })
-        }
+      this.post('local/maintain', me.model, (response) => {
+        me.$message({
+          message: '修改成功',
+          type: 'success'
+        })
+        Object.assign(me.list[me.editIndex], me.model)
+        me.editDialogVisible = false
       })
     },
     onPageChange(page) {
@@ -162,19 +148,12 @@ export default {
         type: 'warning'
       }).then(() => {
         let me = this
-        this.$http.post(`${me.$server_uri}/local/remove/${id}`, {}).then(function (response) {
-          if(response.data.success) {
-            me.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            me.getData(1)
-          } else {
-            me.$message({
-              message: response.data.msg,
-              type: 'warning'
-            })
-          }
+        this.post(`local/remove/${id}`, {}, (response) => {
+          me.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          me.getData(1)
         })
       }).catch(() => {       
       })

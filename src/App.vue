@@ -130,10 +130,27 @@ export default {
       
       console.log(this.password)
     },
+    logout() {
+      
+    },
     login() {
+      let me = this
       if(this.account && this.account.length > 0 && this.accountPassword && this.accountPassword.length > 0) {
-        sessionStorage.setItem("token","token")
-        location.reload()
+        this.$http.post(`${me.$server_uri}/security/login`, { accountName: me.account, password: me.accountPassword }).then(function (response) {
+          if(response.data.success) {
+            me.$message({
+              message: '登录成功',
+              type: 'success'
+            })
+            localStorage.setItem("token",response.data.data.token)
+            location.reload()
+          } else {
+            me.$message({
+              message: response.data.msg,
+              type: 'warning'
+            })
+          }
+        })
       } else {
         this.$message({
           message: '账号密码不能为空',
@@ -144,7 +161,7 @@ export default {
   },
   computed: {
     token() {
-      return sessionStorage.getItem("token")
+      return localStorage.getItem("token")
     }
   }
 }
@@ -160,7 +177,7 @@ export default {
     color: #606266;
   }
 
-  @media screen and (min-height: 800px){
+  @media screen and (min-height: 800px) {
     #login-wrap .login-text span {
       font-weight: bold;
       font-size: 60px;

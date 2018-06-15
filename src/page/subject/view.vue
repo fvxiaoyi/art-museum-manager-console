@@ -75,15 +75,8 @@ export default {
     },
     loadData(id) {
       let me = this
-      this.$http.post(`${me.$server_uri}/subject/get`, {id}).then(function (response) {
-        if(response.data.success) {
-          me.model = response.data.data
-        } else {
-          me.$message({
-            message: response.data.msg,
-            type: 'warning'
-          })
-        }
+      this.post('subject/get', {id}, (response) => {
+        me.model = response.data
       })
     },
     handleUploadSuccess(response, file, fileList) {
@@ -99,34 +92,14 @@ export default {
     submit() {
       let me = this
       if(me.$route.params.id) {
-        this.$http.post(`${me.$server_uri}/subject/maintain`, me.model).then(function (response) {
-          if(response.data.success) {
-            me.$message({
-              message: '修改成功',
-              type: 'success'
-            })
-          } else {
-            me.$message({
-              message: response.data.msg,
-              type: 'warning'
-            })
-          }
+        this.post('subject/maintain', me.model, (response) => {
+          me.$message({
+            message: '修改成功',
+            type: 'success'
+          })
         })
       } else {
-        this.$http.post(`${me.$server_uri}/subject/add`, me.model).then(function (response) {
-          if(response.data.success) {
-            me.$message({
-              message: '添加成功',
-              type: 'success'
-            })
-            me.$router.push('/subject')
-          } else {
-            me.$message({
-              message: response.data.msg,
-              type: 'warning'
-            })
-          }
-        })
+        this.post(`subject/add`, me.model, (response) => me.$router.push('/subject'))
       }
     }
   },

@@ -19,15 +19,22 @@ Vue.prototype.$pageSize = pageSize
 
 Vue.prototype.$server_uri = 'http://localhost'
 
+Vue.prototype.post = function(url, param, cb) {
+	let me = this
+	param = param || {}
+	param.token = localStorage.getItem("token")
+	me.$http.post(`${me.$server_uri}/${url}`, param).then(function (response) {
+		if(response.data.success) {
+			cb(response.data)
+		} else {
+			me.$message.error(response.data.msg)
+		}
+	})
+}
+
 Vue.prototype.loadCourseData = function(cb) {
 	let me = this
-	this.$http.post(`${me.$server_uri}/course/list`, {}).then(function (response) {
-	  if(response.data.success) {
-	  	cb && cb(response.data.data)
-	  } else {
-	    me.$message.error('服务器挂了，联系管理员')
-	  }
-	})
+	this.post('course/list', {}, (response) => cb && cb(response.data))
 }
 
 Vue.prototype.formatCreateTime = function(time) {
