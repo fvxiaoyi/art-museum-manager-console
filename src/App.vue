@@ -35,7 +35,7 @@
           </el-menu-item>
           <el-menu-item index="3" @click="onMenuItemClick('coupon')">
             <i class="el-icon-phone-outline"></i>
-            <span slot="title">试听券</span>
+            <span slot="title">预约试听</span>
           </el-menu-item>
           <el-menu-item index="4" @click="onMenuItemClick('local')">
             <i class="el-icon-location-outline"></i>
@@ -110,46 +110,47 @@ export default {
         this.passwordDialogVisible = true
       }
       if(command === 'b') {
-        sessionStorage.removeItem('token')
-        location.reload()
+        this.logout()
       }
     },
     changePassword() {
-      if(this.password && this.password.length >= 6) {
-        this.passwordDialogVisible = false;
-        this.$message({
-          message: '修改成功',
-          type: 'success'
+      let me = this
+      if(this.password && this.password.length >= 4) {
+        this.post('admin/security/changePassword', {password: me.password}, (response) => {
+          this.passwordDialogVisible = false;
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
         })
       } else {
         this.$message({
-          message: '密码长度必须大于等于6位',
+          message: '密码长度至少4位',
           type: 'warning'
         })
       }
-      
-      console.log(this.password)
     },
     logout() {
-      
+      let me = this
+      this.post('admin/security/logout', {}, (response) => {
+        me.$message({
+          message: '退出成功',
+          type: 'success'
+        })
+        localStorage.removeItem("token")
+        location.reload()
+      })
     },
     login() {
       let me = this
       if(this.account && this.account.length > 0 && this.accountPassword && this.accountPassword.length > 0) {
-        this.$http.post(`${me.$server_uri}/security/login`, { accountName: me.account, password: me.accountPassword }).then(function (response) {
-          if(response.data.success) {
-            me.$message({
-              message: '登录成功',
-              type: 'success'
-            })
-            localStorage.setItem("token",response.data.data.token)
-            location.reload()
-          } else {
-            me.$message({
-              message: response.data.msg,
-              type: 'warning'
-            })
-          }
+        this.post('admin/security/login', { accountName: me.account, password: me.accountPassword }, (response) => {
+          me.$message({
+            message: '登录成功',
+            type: 'success'
+          })
+          localStorage.setItem("token",response.data.token)
+          location.reload()
         })
       } else {
         this.$message({

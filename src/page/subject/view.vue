@@ -75,7 +75,7 @@ export default {
     },
     loadData(id) {
       let me = this
-      this.post('subject/get', {id}, (response) => {
+      this.post('admin/subject/get', {id}, (response) => {
         me.model = response.data
       })
     },
@@ -92,14 +92,14 @@ export default {
     submit() {
       let me = this
       if(me.$route.params.id) {
-        this.post('subject/maintain', me.model, (response) => {
+        this.post('admin/subject/maintain', me.model, (response) => {
           me.$message({
             message: '修改成功',
             type: 'success'
           })
         })
       } else {
-        this.post(`subject/add`, me.model, (response) => me.$router.push('/subject'))
+        this.post(`admin/subject/add`, me.model, (response) => me.$router.push('/subject'))
       }
     }
   },
