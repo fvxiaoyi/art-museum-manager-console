@@ -13,9 +13,7 @@ Vue.use(ElementUI)
 
 Vue.prototype.$http = axios
 
-let screenHeight = window.screen.height
-let pageSize = screenHeight < 1050 ? screenHeight < 900 ? 6 : 8 : 10
-Vue.prototype.$pageSize = pageSize
+Vue.prototype.$pageSize = 10
 
 Vue.prototype.$server_uri = 'http://localhost'
 

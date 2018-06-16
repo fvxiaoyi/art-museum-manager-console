@@ -1,7 +1,8 @@
 <template>
   <div id="subject-view">
     <div class="tbar">
-      <div class="title">添加专题</div>
+      <div class="title" v-if="model.id">编辑专题</div>
+      <div class="title" v-else>添加专题</div>
     </div>
 
     <el-form label-width="100px" size="small">
@@ -99,6 +100,10 @@ export default {
           })
         })
       } else {
+        me.$message({
+          message: '添加成功',
+          type: 'success'
+        })
         this.post(`admin/subject/add`, me.model, (response) => me.$router.push('/subject'))
       }
     }

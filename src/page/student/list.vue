@@ -4,21 +4,41 @@
       <div class="title">学员列表</div>
       <div class="btn-wrap">
         <el-tooltip content="刷新" placement="left" >
-          <el-button type="info" icon="el-icon-refresh" plain size="mini" ></el-button>
+          <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="refresh"></el-button>
         </el-tooltip>
         <el-button type="primary" size="mini" @click="handleAdd" >添加</el-button>
       </div>
     </div>
     <div class="search-bar">
-      <el-radio-group v-model="status">
-        <el-radio :label="0">全部</el-radio>
-        <el-radio :label="1">正常</el-radio>
-        <el-radio :label="2">未激活</el-radio>
-        <el-radio :label="3">已停用</el-radio>
+      <el-radio-group v-model="searchParam.status" >
+        <el-radio :label="1">全部</el-radio>
+        <el-radio :label="2">正常</el-radio>
+        <el-radio :label="3">未激活</el-radio>
+        <el-radio :label="4">已停用</el-radio>
       </el-radio-group>
-      <el-input placeholder="输入学员、家长名称或者手机号识别搜索" v-model="searchName" size="small" style="width:350px;margin-left:20px;">
+      <div class="searchCourse">
+        <el-select v-model="searchParam.courseId" placeholder="请选择实验室" size="small" style="width:150px;">
+          <el-option
+            v-for="item in courses"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="searchLocal">
+        <el-select v-model="searchParam.localId" placeholder="请选择校区" size="small" style="width:150px;">
+          <el-option
+            v-for="item in locals"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </div>
+      <el-input placeholder="输入手机号、名称搜索" v-model="searchParam.name" size="small" style="width:250px;margin-left:20px;">
         <el-tooltip slot="append" content="搜索" placement="right" >
-          <el-button icon="el-icon-search"></el-button>
+          <el-button icon="el-icon-search" @click="getData(1)"></el-button>
         </el-tooltip>
       </el-input>
     </div>
@@ -41,17 +61,13 @@
           label="电话">
         </el-table-column>
         <el-table-column
-          label="激活">
-          <template slot-scope="scope">
-            <span v-if="scope.row.active">已激活</span>
-            <span v-else>{{ scope.row.activeCode }}</span>
-          </template>
+          prop="localName"
+          label="校区">
         </el-table-column>
         <el-table-column
           label="状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.lock">已停用</span>
-            <span v-else>正常</span>
+            <span>{{ statusRender(scope.row) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -60,46 +76,29 @@
             <span>{{ formatCreateTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
+
         <el-table-column
           fixed="right"
           label="操作"
           width="150">
           <template slot-scope="scope">
-            <el-button @click="handleEdit(scope.row, scope.$index)" type="text" size="small">编辑</el-button>
-            <el-button v-if="!scope.row.lock" type="text" size="small" @click="lock">停用</el-button>
-            <el-button v-else type="text" size="small" @click="unlock">启用</el-button>
-            <el-button type="text" size="small" @click="remove">删除</el-button>
+            <el-button @click="handleEdit(scope.row.id)" type="text" size="small">编辑</el-button>
+            <el-button v-if="scope.row.active && !scope.row.loginLock" type="text" size="small" @click="lock(scope.row.id)">停用</el-button>
+            <el-button v-if="scope.row.active && scope.row.loginLock" type="text" size="small" @click="unlock(scope.row.id)">启用</el-button>
+            <el-button type="text" size="small" @click="remove(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-pagination
+     <el-pagination
+      @current-change="onPageChange"
       background
       layout="prev, pager, next"
-      :page-size="pageSize"
-      :total="total">
-    </el-pagination>
-
-    <el-dialog
-      title="修改学员基本资料"
-      :visible.sync="studentEditDialogVisible"
+      :page-size="$pageSize"
+      :total="total"
+      :current-page="currentPage"
       >
-      <el-form label-width="80px">
-        <el-form-item label="学员名称">
-          <el-input v-model="model.name"></el-input>
-        </el-form-item>
-        <el-form-item label="家长名称">
-          <el-input v-model="model.parentName"></el-input>
-        </el-form-item>
-        <el-form-item label="电话号码">
-          <el-input v-model="model.phone"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="studentEditDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="update">更 新</el-button>
-      </span>
-    </el-dialog>
+    </el-pagination>
 
   </div>
 </template>
@@ -107,175 +106,142 @@
 <script>
 export default {
   name: 'StudentList',
+  created() {
+    let me = this
+    this.loadCourseData((data) => me.courses = data)
+    this.post('admin/local/all', {}, (response) => me.locals = response.data)
+    this.getData(1)
+  },
   data () {
     return {
-      searchName: null,
-      status: 0,
-      studentEditDialogVisible: false,
-      total: 100,
-      model: {},
-      editIndex: null,
-      list: [{
-        id: 1,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: true,
-        activeCode: 'A3B4',
-        lock: false,
-        createTime: Date.now()
-      },
-      {
-        id: 2,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: false,
-        activeCode: 'A3B4',
-        lock: false,
-        createTime: Date.now()
-      },
-      {
-        id: 3,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: true,
-        activeCode: 'A3B4',
-        lock: false,
-        createTime: Date.now()
-      },
-      {
-        id: 4,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: true,
-        activeCode: 'A3B4',
-        lock: true,
-        createTime: Date.now()
-      },
-      {
-        id: 5,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: true,
-        activeCode: 'A3B4',
-        lock: false,
-        createTime: Date.now()
-      },
-      {
-        id: 6,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: true,
-        activeCode: 'A3B4',
-        lock: false,
-        createTime: Date.now()
-      },
-      {
-        id: 7,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: true,
-        activeCode: 'A3B4',
-        lock: false,
-        createTime: Date.now()
-      },
-      {
-        id: 8,
-        name: '张三',
-        parentName: '李四',
-        phone: '123456789',
-        active: true,
-        activeCode: 'A3B4',
-        lock: false,
-        createTime: Date.now()
-      }]
+      locals: [],
+      courses: [],
+      list: [],
+      total: 0,
+      currentPage: 1,
+      searchParam: {
+        status: 1
+      }
     }
   },
   methods: {
+    getData(page) {
+      let me = this,
+        limit = this.$pageSize,
+        start
+      if(page === 1) {
+        start = 0
+      } else {
+        start = this.$pageSize * (page - 1)
+      }
+      let params = { start, limit }
+      if(me.searchParam) {
+        for(let x in me.searchParam) {
+          if(!me.searchParam[x]) {
+            delete me.searchParam[x]
+          }
+        }
+        Object.assign(params, me.searchParam)
+        if(params.status === 1) {
+          delete params['status']
+        }
+        if(params.name) {
+          params.name = `%${params.name}%`
+        }
+      }
+      this.post('admin/student/list', params, (response) => {
+        me.list = response.data
+        me.total = response.total
+      })
+    },
+    onPageChange(page) {
+      this.currentPage = page
+      this.getData(page)
+    },
+    refresh() {
+      this.searchParam = {
+        status: 1
+      }
+      this.getData(1)
+    },
     tableRowStyle({row, rowIndex}) {
-      if (row.lock) {
+      if (row.loginLock) {
         return 'backgroundColor:#FAB6B6'
       } else if (!row.active) {
         return 'backgroundColor:#F3D19E'
       }
       return ''
     },
-    handleEdit(model, index) {
-      this.studentEditDialogVisible = true
-      Object.assign(this.model, model)
-      this.editIndex = index
+    handleEdit(id) {
+      this.$router.push(`/student/view/${id}`)
     },
     handleAdd() {
-      this.$router.push('/student/add')
+      this.$router.push('/student/view')
     },
-    update() {
-      if((this.model.name && this.model.name.length > 0) || (this.model.parentName && this.model.parentName.length > 0)) {
-        Object.assign(this.list[this.editIndex], this.model)
-        this.editIndex = null
-        this.model = {}
-        this.studentEditDialogVisible = false
-        this.$message({
-          type: 'success',
-          message: '更新成功!'
-        })
-      } else {
-        this.$message({
-          message: '至少要填写一个学员名字或家长名字',
-          type: 'warning'
-        })
-      }
-      
-    },
-    lock() {
+    lock(id) {
+      let me = this
       this.$confirm('此操作将停用帐号, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '停用成功!'
+        this.post('admin/student/lock', {id}, (response) => {
+          this.$message({
+            type: 'success',
+            message: '停用成功!'
+          })
+          me.getData(me.currentPage)
         })
       }).catch(() => {        
       })
     },
-    unlock() {
+    unlock(id) {
+      let me = this
       this.$confirm('此操作将启用帐号, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '启用成功!'
+        this.post('admin/student/unlock', {id}, (response) => {
+          this.$message({
+            type: 'success',
+            message: '启用成功!'
+          })
+          me.getData(me.currentPage)
         })
       }).catch(() => {        
       })
     },
-    remove() {
+    remove(id) {
+      let me = this
       this.$confirm('此操作将永久删除该帐号, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+        this.post('admin/student/remove', {id}, (response) => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          me.getData(currentPage)
         })
       }).catch(() => {       
       })
+    },
+    statusRender(model) {
+      if(model.active) {
+        if(model.loginLock) {
+          return '已冻结'
+        } else {
+          return '正常'
+        }
+      } else {
+        return '未激活'
+      }
     }
   },
   computed: {
-    pageSize() {
-      return this.$pageSize
-    }
   }
 }
 </script>
@@ -296,7 +262,7 @@ export default {
 
   #student-list .tbar .title {
     float: left;
-    font-size: 14px;
+    font-size: 18px;
   }
 
   #student-list .tbar .btn-wrap {
@@ -309,6 +275,16 @@ export default {
 
   #student-list .list-wrap {
     margin-bottom: 12px;
+  }
+  
+  #student-list .searchCourse {
+    margin-left: 12px;
+    display: inline-block;
+  }
+
+  #student-list .searchLocal {
+    margin-left: 12px;
+    display: inline-block;
   }
   
 </style>

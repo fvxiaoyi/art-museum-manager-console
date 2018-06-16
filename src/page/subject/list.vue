@@ -11,9 +11,9 @@
     </div>
     <div class="search-bar">
       <el-radio-group v-model="searchParam.hot">
-        <el-radio :label="0">全部</el-radio>
-        <el-radio :label="1">推荐</el-radio>
-        <el-radio :label="2">未推荐</el-radio>
+        <el-radio :label="1">全部</el-radio>
+        <el-radio :label="2">推荐</el-radio>
+        <el-radio :label="3">未推荐</el-radio>
       </el-radio-group>
       <div class="searchCourse">
         <el-select v-model="searchParam.courseId" placeholder="请选择要过滤的实验室" size="small">
@@ -87,7 +87,7 @@ export default {
   data () {
     return {
       searchParam: {
-        hot: 0,
+        hot: 1,
         name: null,
         courseId: null
       },
@@ -102,14 +102,17 @@ export default {
       this.$router.push('/subject/view')
     },
     handleRefresh() {
+      this.searchParam = {
+        hot: 1
+      }
       this.loadData(1)
     },
     onPageChange(page) {
       this.currentPage = page
-      this.getData(page)
+      this.loadData(page)
     },
     search() {
-      this.loadData(1, Object.assign({}, this.searchParam))
+      this.loadData(1)
     },
     handleHot(id, hot, index) {
       let me = this
@@ -121,7 +124,7 @@ export default {
         me.list[index].hot = hot
       })
     },
-    loadData(page, _params) {
+    loadData(page) {
       let me = this,
         limit = this.$pageSize,
         start
@@ -130,24 +133,25 @@ export default {
       } else {
         start = this.$pageSize * (page - 1)
       }
-      let params = { start, limit }
+      let params = { start, limit },
+        _params = me.searchParam
       if(_params) {
         for(let x in _params) {
           if(!_params[x]) {
             delete _params[x]
           }
         }
-        if(_params.hot === 0) {
-          delete _params.hot
-        } else if(_params.hot === 1) {
-          _params.hot = true
-        } else if(_params.hot === 2) {
-          _params.hot = false
-        }
-        if(_params.name) {
-          _params.name = `%${_params.name}%`
-        }
         Object.assign(params, _params)
+        if(params.hot === 1) {
+          delete params.hot
+        } else if(params.hot === 2) {
+          params.hot = true
+        } else if(params.hot === 3) {
+          params.hot = false
+        }
+        if(params.name) {
+          params.name = `%${params.name}%`
+        }
       }
       this.post('admin/subject/list', params, (response) => {
         me.list = response.data

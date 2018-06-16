@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 const articleList = () => import('@/page/article/list')
 const studentList = () => import('@/page/student/list')
-const studentAdd = () => import('@/page/student/add')
+const studentView = () => import('@/page/student/view')
 const couponList = () => import('@/page/coupon/list')
 const localList = () => import('@/page/local/list')
 const subjectList = () => import('@/page/subject/list')
@@ -22,8 +22,12 @@ export default new Router({
       component: studentList
     },
     {
-      path: '/student/add',
-      component: studentAdd
+      path: '/student/view',
+      component: studentView
+    },
+    {
+      path: '/student/view/:id',
+      component: studentView
     },
     {
       path: '/coupon',
