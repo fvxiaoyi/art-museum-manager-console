@@ -108,11 +108,10 @@ export default {
           type: 'success'
         })
         me.addDialogVisible = false
-        me.getData(me.currentPage)
+        me.getData(1)
       })
     },
     handleRefresh() {
-      this.currentPage = 1
       this.getData(1)
     },
     handleEdit() {
@@ -179,7 +178,7 @@ export default {
 
   #local-list .tbar .title {
     float: left;
-    font-size: 14px;
+    font-size: 18px;
   }
 
   #local-list .tbar .btn-wrap {

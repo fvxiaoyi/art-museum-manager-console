@@ -27,7 +27,7 @@
         </el-select>
       </div>
       <div class="searchLocal">
-        <el-select v-model="searchParam.localId" placeholder="请选择校区" size="small" style="width:150px;">
+        <el-select v-model="searchParam.localId" placeholder="请选择校区" size="small" style="width:160px;">
           <el-option
             v-for="item in locals"
             :key="item.id"
@@ -36,7 +36,7 @@
           </el-option>
         </el-select>
       </div>
-      <el-input placeholder="输入手机号、名称搜索" v-model="searchParam.name" size="small" style="width:250px;margin-left:20px;">
+      <el-input placeholder="输入手机号、名称搜索" v-model="searchParam.name" size="small" style="width:230px;margin-left:20px;">
         <el-tooltip slot="append" content="搜索" placement="right" >
           <el-button icon="el-icon-search" @click="getData(1)"></el-button>
         </el-tooltip>
@@ -90,7 +90,7 @@
         </el-table-column>
       </el-table>
     </div>
-     <el-pagination
+    <el-pagination
       @current-change="onPageChange"
       background
       layout="prev, pager, next"

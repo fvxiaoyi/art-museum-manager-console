@@ -42,7 +42,7 @@
             <span slot="title">校区</span>
           </el-menu-item>
           <el-menu-item index="5" @click="onMenuItemClick('subject')">
-            <i class="el-icon-date"></i>
+            <i class="el-icon-edit"></i>
             <span slot="title">专题</span>
           </el-menu-item>
         </el-menu>
@@ -91,7 +91,7 @@ export default {
   name: 'App',
   data() {
     return {
-      isCollapse: false,
+      isCollapse: true,
       passwordDialogVisible: false,
       password: null,
       account: null,

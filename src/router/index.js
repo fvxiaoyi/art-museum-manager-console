@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 const articleList = () => import('@/page/article/list')
+const articleView = () => import('@/page/article/view')
 const studentList = () => import('@/page/student/list')
 const studentView = () => import('@/page/student/view')
 const couponList = () => import('@/page/coupon/list')
@@ -16,6 +17,14 @@ export default new Router({
     {
       path: '/article',
       component: articleList
+    },
+    {
+      path: '/article/view',
+      component: articleView
+    },
+    {
+      path: '/article/view/:id',
+      component: articleView
     },
     {
       path: '/student',

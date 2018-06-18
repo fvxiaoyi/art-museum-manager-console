@@ -20,7 +20,7 @@
       </el-form-item>
       
       <el-form-item label="专题名称" required>
-        <el-input v-model="model.name" placeholder="请输入专题名称" style="width: 24.5%"></el-input>
+        <el-input v-model="model.name" placeholder="请输入专题名称" style="width: 200px;"></el-input>
       </el-form-item>
       <el-form-item label="实验室" required>
         <el-select v-model="model.courseId" placeholder="请选择所属实验室" >
@@ -100,11 +100,14 @@ export default {
           })
         })
       } else {
-        me.$message({
-          message: '添加成功',
-          type: 'success'
+        
+        this.post(`admin/subject/add`, me.model, (response) => {
+          me.$message({
+            message: '添加成功',
+            type: 'success'
+          })
+          me.$router.push('/subject')
         })
-        this.post(`admin/subject/add`, me.model, (response) => me.$router.push('/subject'))
       }
     }
   },
