@@ -37,11 +37,15 @@
             <i class="el-icon-phone-outline"></i>
             <span slot="title">预约试听</span>
           </el-menu-item>
-          <el-menu-item index="4" @click="onMenuItemClick('local')">
+          <el-menu-item index="4" @click="onMenuItemClick('star')">
+            <i class="el-icon-star-off"></i>
+            <span slot="title">点赞查询</span>
+          </el-menu-item>
+          <el-menu-item index="5" @click="onMenuItemClick('local')">
             <i class="el-icon-location-outline"></i>
             <span slot="title">校区</span>
           </el-menu-item>
-          <el-menu-item index="5" @click="onMenuItemClick('subject')">
+          <el-menu-item index="6" @click="onMenuItemClick('subject')">
             <i class="el-icon-edit"></i>
             <span slot="title">专题</span>
           </el-menu-item>
@@ -68,7 +72,7 @@
           <span class="title" style="color:#999;">-</span>
           <span class="title">管理控制台</span>
         </div>
-        <div class="copyright">XXXXX @2018 All rights reserved</div>
+        <div class="copyright">hi美学 @2018 All rights reserved</div>
       </div>
       <div class="login-form">
         <div class="form-wrap" >
@@ -225,6 +229,14 @@ export default {
 
   .clear{
     zoom:1;
+  }
+
+  .left {
+    float: left;
+  }
+
+  .right {
+    float: right;
   }
 
   #app {

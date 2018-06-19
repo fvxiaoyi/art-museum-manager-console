@@ -67,6 +67,23 @@ Vue.prototype.formatCreateTime = function(time) {
   }
 }
 
+Vue.prototype.formatFullCreateTime = function(time) {
+  if(time) {
+    let d = new Date(time)
+    let hour = d.getHours() + '',
+      min = d.getMinutes() + ''
+    if(hour.length === 1) {
+      hour = '0' + hour
+    }
+    if(min.length === 1) {
+      min = '0' + min
+    }
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + hour + ":" + min
+  } else {
+    return ''
+  }
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

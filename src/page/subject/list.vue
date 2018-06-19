@@ -177,7 +177,7 @@ export default {
 
 
 <style scoped>
-  #local-list {
+  #subject-list {
     height: 100%;
     overflow: auto;
     overflow-x: hidden;

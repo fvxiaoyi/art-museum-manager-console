@@ -147,7 +147,7 @@ export default {
         type: 'warning'
       }).then(() => {
         let me = this
-        this.post(`admin/local/remove/${id}`, {}, (response) => {
+        this.post('admin/local/remove', {id}, (response) => {
           me.$message({
             message: '删除成功',
             type: 'success'

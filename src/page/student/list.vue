@@ -43,44 +43,22 @@
       </el-input>
     </div>
     <div class="list-wrap">
-      <el-table
-        :data="list"
-        border
-        :row-style="tableRowStyle"
-        style="width: 96%">
-        <el-table-column
-          prop="name"
-          label="姓名">
-        </el-table-column>
-        <el-table-column
-          prop="parentName"
-          label="家长姓名">
-        </el-table-column>
-        <el-table-column
-          prop="phone"
-          label="电话">
-        </el-table-column>
-        <el-table-column
-          prop="localName"
-          label="校区">
-        </el-table-column>
-        <el-table-column
-          label="状态">
+      <el-table :data="list" border :row-style="tableRowStyle" style="width: 96%">
+        <el-table-column prop="name" label="姓名"></el-table-column>
+        <el-table-column prop="parentName" label="家长姓名"></el-table-column>
+        <el-table-column prop="phone" label="电话"></el-table-column>
+        <el-table-column prop="localName" label="校区"></el-table-column>
+        <el-table-column label="状态">
           <template slot-scope="scope">
             <span>{{ statusRender(scope.row) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="创建时间">
+        <el-table-column label="创建时间">
           <template slot-scope="scope">
             <span>{{ formatCreateTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="150">
+        <el-table-column fixed="right" label="操作" width="150">
           <template slot-scope="scope">
             <el-button @click="handleEdit(scope.row.id)" type="text" size="small">编辑</el-button>
             <el-button v-if="scope.row.active && !scope.row.loginLock" type="text" size="small" @click="lock(scope.row.id)">停用</el-button>

@@ -9,6 +9,7 @@ const couponList = () => import('@/page/coupon/list')
 const localList = () => import('@/page/local/list')
 const subjectList = () => import('@/page/subject/list')
 const subjectView = () => import('@/page/subject/view')
+const starList = () => import('@/page/star/list')
 
 Vue.use(Router)
 
@@ -57,6 +58,10 @@ export default new Router({
     {
       path: '/subject/view/:id',
       component: subjectView
+    },
+    {
+      path: '/star',
+      component: starList
     }
   ]
 })

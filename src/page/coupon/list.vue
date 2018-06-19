@@ -216,7 +216,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/coupon/delete', {id}, (response) => {
+        this.post('admin/coupon/remove', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '删除成功!'

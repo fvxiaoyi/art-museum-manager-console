@@ -15,12 +15,8 @@
             <img :src="model.displayImg" class="avatar">
             <div v-if="imgMaskVisible" class="mark"></div>
             <div v-if="imgMaskVisible" class="btn-wrap">
-              <el-tooltip content="重新上传" placement="left" >
-                <el-button class="el-icon-delete"></el-button>
-              </el-tooltip>
-              <el-tooltip content="查看原图" placement="right" >
-                <el-button class="el-icon-zoom-in"></el-button>
-              </el-tooltip>
+              <i class="el-icon-delete" @click="deleteImg"></i>
+              <i class="el-icon-zoom-in" @click="dialogVisible = true"></i>
             </div>
           </div>
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -31,7 +27,7 @@
         <el-input v-model="model.name" placeholder="请输入作品名称" style="width: 200px;"></el-input>
       </el-form-item>
       <el-form-item label="作品类型">
-        <el-select v-model="model.courseId" placeholder="请选择作品类型" style="width: 200px;">
+        <el-select v-model="model.courseId" @change="onCourseChange" placeholder="请选择作品类型" style="width: 200px;">
           <el-option v-for="item in courses"
             :key="item.id"
             :label="item.name"
@@ -40,7 +36,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="作品专题">
-        <el-select v-model="model.courseId" placeholder="请选择发布专题" style="width: 200px;">
+        <el-select v-model="model.subjectId" placeholder="请选择发布专题" style="width: 200px;">
           <el-option v-for="item in subjects"
             :key="item.id"
             :label="item.name"
@@ -49,7 +45,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="作者" required>
-        <el-select v-model="model.courseId" placeholder="请选择学员" style="width: 200px;">
+        <el-select v-model="model.studentId" placeholder="请选择学员" style="width: 200px;">
           <el-option v-for="item in students"
             :key="item.id"
             :label="item.name"
@@ -99,8 +95,9 @@ export default {
       dialogVisible: false,
       model: {
         size: 'FOUR_K',
-        displayImg: "https://store-1256528427.cos.ap-guangzhou.myqcloud.com/2018-6/20d4dec8-1942-4d65-8b96-8a71968ba1c3"
-
+        displayImg: "https://store-1256528427.cos.ap-guangzhou.myqcloud.com/2018-6/20d4dec8-1942-4d65-8b96-8a71968ba1c3",
+        height: 0,
+        width: 0
       },
       courses: [],
       subjects: [],
@@ -120,7 +117,9 @@ export default {
   methods: {
     getData(id) {
       let me = this
-      this.post('admin/subject/get', {id}, (response) => {
+      this.post('admin/subject/all', {}, (response) => me.subjects = response.data)
+      this.post('admin/student/all', {}, (response) => me.students = response.data)
+      this.post('admin/art/get', {id}, (response) => {
         me.model = response.data
       })
     },
@@ -155,6 +154,18 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    onCourseChange(newValue) {
+      let me = this
+      if(newValue) {
+        me.subject = null
+        me.student = null
+        this.post('admin/subject/all', {courseId: newValue}, (response) => me.subjects = response.data)
+        this.post('admin/student/all', {courseId: newValue}, (response) => me.students = response.data)
+      }
+    },
+    deleteImg() {
+      this.model.displayImg = null
     }
   },
   computed: {
@@ -210,7 +221,17 @@ export default {
     line-height: 200px;
   }
 
+  .img-wrap .btn-wrap i {
+    display: inline-block;
+    font-size: 26px;
+    width: 30px;
+    height: 30px;
+    color: #fff;
+  }
 
+  .img-wrap .btn-wrap i:hover {
+    cursor: pointer;
+  }
   
   .avatar-uploader-icon {
     font-size: 28px;
