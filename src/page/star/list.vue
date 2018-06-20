@@ -84,7 +84,7 @@ export default {
   name: 'starList',
   data () {
     return {
-      dialogVisible: true,
+      dialogVisible: false,
       searchParam: {},
       list: [],
       detailStar: {},
