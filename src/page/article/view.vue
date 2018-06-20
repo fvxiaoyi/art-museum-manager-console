@@ -6,17 +6,13 @@
     </div>
     <el-form label-width="100px" size="small">
       <el-form-item label="预览图">
-        <el-upload
-          class="avatar-uploader"
-          :action="uploadUrl"
-          :show-file-list="false"
-          :on-success="handleUploadSuccess">
-          <div v-if="model.displayImg" class="img-wrap" @click.stop="imgMaskVisible=true">
-            <img :src="model.displayImg" class="avatar">
+        <el-upload class="avatar-uploader" action="" :show-file-list="false" :http-request="upload">
+          <div v-if="model.displayImg" class="img-wrap" @click.stop="imgMaskVisible=!imgMaskVisible">
+            <img :src="`${model.thumbnailUrl}?imageView2/1/w/200/h/200`" class="avatar">
             <div v-if="imgMaskVisible" class="mark"></div>
             <div v-if="imgMaskVisible" class="btn-wrap">
-              <i class="el-icon-delete" @click="deleteImg"></i>
-              <i class="el-icon-zoom-in" @click="dialogVisible = true"></i>
+              <i class="el-icon-delete" @click.stop="deleteImg"></i>
+              <i class="el-icon-zoom-in" @click.stop="dialogVisible = true"></i>
             </div>
           </div>
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -74,7 +70,7 @@
       </el-form-item>
     </el-form>
     <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="model.displayImg" alt="">
+      <img width="100%" :src="model.originalUrl" alt="">
     </el-dialog>
   </div>
 </template>
@@ -95,9 +91,11 @@ export default {
       dialogVisible: false,
       model: {
         size: 'FOUR_K',
-        displayImg: "https://store-1256528427.cos.ap-guangzhou.myqcloud.com/2018-6/20d4dec8-1942-4d65-8b96-8a71968ba1c3",
+        displayImg: '',
         height: 0,
-        width: 0
+        width: 0,
+        originalUrl: '',
+        thumbnailUrl: ''
       },
       courses: [],
       subjects: [],
@@ -145,16 +143,6 @@ export default {
         })
       }
     },
-    handleUploadSuccess(response, file, fileList) {
-      this.model.displayImg = response.data.original_url
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
     onCourseChange(newValue) {
       let me = this
       if(newValue) {
@@ -166,13 +154,21 @@ export default {
     },
     deleteImg() {
       this.model.displayImg = null
+    },
+    upload(item) {
+      let formData = new FormData(),
+        me = this
+      formData.append('file', item.file)
+      formData.append('type', 'article')
+      this.post('admin/store/upload', formData, (response) => {
+        me.model.displayImg = response.data.fileName
+        me.model.originalUrl = response.data.original_url
+        me.model.thumbnailUrl = response.data.thumbnail_url
+      })
     }
   },
   computed: {
-    uploadUrl() {
-      let me = this
-      return `${me.$server_uri}/store/upload`
-    }
+    
   }
 }
 </script>

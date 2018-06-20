@@ -8,13 +8,8 @@
     <el-form label-width="100px" size="small">
 
       <el-form-item label="展示图">
-        <el-upload
-          class="avatar-uploader"
-          :action="uploadUrl"
-          :show-file-list="false"
-          :on-success="handleUploadSuccess"
-          :before-upload="beforeAvatarUpload">
-          <img v-if="model.displayImg" :src="model.displayImg" class="avatar">
+        <el-upload class="avatar-uploader" action="" :show-file-list="false" :http-request="upload">
+          <img v-if="model.displayImg" :src="model.originalUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
@@ -63,7 +58,9 @@ export default {
         name: null,
         courseId: null,
         displayImg: null,
-        hot: false
+        hot: false,
+        originalUrl: '',
+        thumbnailUrl: ''
       },
       courses: [],
       dialogImageUrl: '',
@@ -100,7 +97,6 @@ export default {
           })
         })
       } else {
-        
         this.post(`admin/subject/add`, me.model, (response) => {
           me.$message({
             message: '添加成功',
@@ -109,13 +105,20 @@ export default {
           me.$router.push('/subject')
         })
       }
+    },
+    upload(item) {
+      let formData = new FormData(),
+        me = this
+      formData.append('file', item.file)
+      formData.append('type', 'banner')
+      this.post('admin/store/upload', formData, (response) => {
+        me.model.displayImg = response.data.fileName
+        me.model.originalUrl = response.data.original_url
+        me.model.thumbnailUrl = response.data.thumbnail_url
+      })
     }
   },
   computed: {
-    uploadUrl() {
-      let me = this
-      return `${me.$server_uri}/store/upload`
-    }
   }
 }
 </script>
