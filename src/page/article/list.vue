@@ -1,51 +1,24 @@
 <template>
   <div id="article-list">
-    <div class="tbar clear">
-      <div class="title">作品列表</div>
-      <div class="btn-wrap">
-        <el-tooltip content="刷新" placement="left" >
-          <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh"></el-button>
-        </el-tooltip>
-        <el-button type="primary" size="mini" @click="handleAdd" >添加</el-button>
+    <v-title-bar>作品列表</v-title-bar>
+    <div class="btn-wrap clear">
+      <el-button class="left" type="primary" plain size="mini" @click="handleAdd">添加</el-button>
+      <div class="right">
+        <el-select v-model="searchParam.courseId" @change="onCourseChange" placeholder="请选择作品类型" size="mini" style="width:160px;">
+          <el-option v-for="item in courses" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <el-select v-model="searchParam.subjectId" placeholder="请选择作品专题" size="mini" style="width:160px;">
+          <el-option v-for="item in subjects" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <el-select v-model="searchParam.localId" placeholder="请选择校区" size="mini" style="width:160px;">
+          <el-option v-for="item in locals" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <el-input size="mini" v-model="searchParam.name" placeholder="输入作品、学员名称识别搜索" style="width: 250px;"></el-input>
+        <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+        <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
     </div>
-    <div class="search-bar">
-      <div class="searchCourse">
-        <el-select v-model="searchParam.courseId" @change="onCourseChange" placeholder="请选择作品类型" size="small" style="width:150px;">
-          <el-option
-            v-for="item in courses"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </div>
-      <div class="searchSubject">
-        <el-select v-model="searchParam.subjectId" placeholder="请选择作品专题" size="small" style="width:150px;">
-          <el-option
-            v-for="item in subjects"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </div>
-      <div class="searchLocal">
-        <el-select v-model="searchParam.localId" placeholder="请选择校区" size="small" style="width:160px;">
-          <el-option
-            v-for="item in locals"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </div>
-      <el-input placeholder="输入作品、学员名称识别搜索" v-model="searchParam.name" size="small" style="width:300px;margin-left:12px;">
-        <el-tooltip slot="append" content="搜索" placement="right" >
-          <el-button icon="el-icon-search" @click="getData(1)"></el-button>
-        </el-tooltip>
-      </el-input>
-    </div>
+
     <div class="list-wrap">
       <el-table
         :data="list"
@@ -58,11 +31,11 @@
         <el-table-column prop="studentLocalName" label="校区"></el-table-column>
         <el-table-column prop="monthStar" label="当月赞"></el-table-column>
         <el-table-column prop="totalStar" label="总赞数"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="180">
+        <el-table-column fixed="right" label="操作" width="250">
           <template slot-scope="scope">
-            <el-button @click="comment(scope.row.id)" type="text" size="small">留言管理</el-button>
-            <el-button @click="edit(scope.row.id)" type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small" @click="remove(scope.row.id)">删除</el-button>
+            <el-button type="info" size="mini" plain @click="comment(scope.row.id)">留言管理</el-button>
+            <el-button type="primary" size="mini" plain @click="edit(scope.row.id)">编辑</el-button>
+            <el-button type="danger" size="mini" @click="remove(scope.row.id)" plain>删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -82,22 +55,26 @@
         <div class="comment-wrap" v-for="(item, index) in comments">
           <div class="comment">
             <div class="publisher">
-              <div>{{item.name}}</div>
-              <div class="time">{{formatFullCreateTime(item.createTime)}}</div>
+              <span>{{item.name}}</span>
+              <span>{{formatFullCreateTime(item.createTime)}}</span>
             </div>
-            <div class="content">习近平指出，中玻建交33年来，两国关系持续稳定发展，当前处于历史最好时期。中方赞赏玻方坚定奉行一个中国政策，积极响应“一带一路”倡议，大力推动深化中拉关系。我们愿同玻方一道，以两国建立战略伙伴关系为重要契机，不断深化各领域交流和合作，推动两国关系迈上新台阶、开辟新前景。</div>
-            <div class="btn-wrap">
-              <el-button type="text" size="small" @click="removeComment(item.id, index)">删除</el-button>
+            <div class="content">
+              <span>{{item.content}}</span>
+              <div>
+                <el-button type="danger" size="mini" @click="removeComment(item.id, item.articleId)" plain>删除</el-button>
+              </div>
             </div>
           </div>
           <div class="subCommnet" v-if="item.subComments.length>0" v-for="sub in item.subComments">
             <div class="publisher">
-              <div>{{sub.name}}</div>
-              <div class="time">{{formatFullCreateTime(sub.createTime)}}</div>
+              <span>{{sub.name}}</span>
+              <span>{{formatFullCreateTime(sub.createTime)}}</span>
             </div>
-            <div class="content">{{sub.content}}</div>
-            <div class="btn-wrap">
-              <el-button type="text" size="small" >删除</el-button>
+            <div class="content">
+              <span>{{sub.content}}</span>
+              <div>
+                <el-button type="danger" size="mini" @click="removeComment(sub.id, item.articleId)" plain>删除</el-button>
+              </div>
             </div>
           </div>
         </div>
@@ -112,7 +89,7 @@ export default {
   name: 'ArticleList',
   created() {
     let me = this
-    this.loadCourseData((data) => me.courses = data)
+    this.post('admin/course/list', {}, (response) => me.courses = response.data)
     this.post('admin/local/all', {}, (response) => me.locals = response.data)
     this.post('admin/subject/all', {}, (response) => me.subjects = response.data)
     this.getData(1)
@@ -133,37 +110,35 @@ export default {
   },
   methods: {
     getData(page) {
-      let me = this,
-        limit = this.$pageSize,
-        start
-      if(page === 1) {
-        start = 0
-      } else {
-        start = this.$pageSize * (page - 1)
-      }
-      let params = { start, limit },
-        _params = me.searchParam
-      if(_params) {
-        for(let x in _params) {
-          if(!_params[x]) {
-            delete _params[x]
-          }
+      let me = this
+      me.getListData('admin/art/list', page, me.searchParam, (data, total) => {
+        me.total = total
+        me.list = data
+      }, (param) => {
+        if(param.name) {
+          param.name = `%${param.name}%`
         }
-        Object.assign(params, _params)
-        if(params.name) {
-          params.name = `%${params.name}%`
-        }
-      }
-      this.post('admin/art/list', params, (response) => {
-        me.list = response.data
-        me.total = response.total
       })
     },
     edit(id) {
       this.$router.push(`/article/view/${id}`)
     },
     remove(id) {
-
+      let me = this
+      this.$confirm('此操作将永久删除该作品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.post('admin/art/remove', {id}, (response) => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          me.getData(me.currentPage)
+        })
+      }).catch(() => {       
+      })
     },
     onPageChange(page) {
       this.currentPage = page
@@ -193,10 +168,10 @@ export default {
         me.commentDialogVisible = true
       })
     },
-    removeComment(id, index) {
+    removeComment(id, articleId) {
       let me = this
       this.post('admin/comment/remove', { id }, (response) => {
-        me.comments.splice(index, 1)
+        me.comment(articleId)
       })
     }
   }
@@ -211,41 +186,11 @@ export default {
     overflow-x: hidden;
   }
   
-  #article-list .tbar {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-    margin-bottom: 12px;
+  .btn-wrap .right {
+    margin-right: 4%;
   }
 
-  #article-list .tbar .title {
-    float: left;
-    font-size: 18px;
-  }
-
-  #article-list .tbar .btn-wrap {
-    float: right;
-  }
-
-  #article-list .search-bar {
-    margin: 12px 0;
-  }
-
-  #article-list .searchCourse {
-    display: inline-block;
-  }
-
-  #article-list .searchLocal {
-    margin-left: 12px;
-    display: inline-block;
-  }
-
-  #article-list .searchSubject {
-    margin-left: 12px;
-    display: inline-block;
-  }
-
-  #article-list .list-wrap {
+  .list-wrap, .btn-wrap {
     margin-bottom: 12px;
   }
 
@@ -256,30 +201,29 @@ export default {
   .comment, .subCommnet {
     min-height: 60px;
     max-height: 180px;
-    display: flex;
-    padding-top: 10px;
     padding-bottom: 10px;
   }
 
+  .comment {
+    font-size: 14px;
+  }
+
   .comment-wrap .publisher {
-    width: 120px;
+    height: 30px;
+    line-height: 30px;
   }
 
-  .comment-wrap .publisher .time {
-    font-size: 8px;
+  .comment-wrap .content{
+    display: flex;
   }
 
-  .comment-wrap .content {
+  .comment-wrap .content span{
     flex: 1;
   }
-
-  .comment-wrap .btn-wrap {
-    width: 100px;
-    text-align: center;
-  }
-
+ 
   .subCommnet {
-    padding-left: 60px;
+    font-size: 12px;
+    padding-left: 20px;
     border-top: 1px dashed #DCDFE6;
   }
 </style>

@@ -4,18 +4,20 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import titleBar from './components/titleBar'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+Vue.component('v-title-bar', titleBar)
 
 Vue.prototype.$http = axios
 
 Vue.prototype.$pageSize = 10
 
-Vue.prototype.$server_uri = 'http://localhost'
+Vue.prototype.$server_uri = 'http://127.0.0.1:7000'
 
 axios.interceptors.request.use(
   config => {
@@ -48,14 +50,31 @@ Vue.prototype.post = function(url, param, cb) {
         })
 			}
     } else {
-      me.$message.error('服务器挂了')
+      me.$message.error(error)
     }
 	})
 }
 
-Vue.prototype.loadCourseData = function(cb) {
-	let me = this
-	this.post('admin/course/list', {}, (response) => cb && cb(response.data))
+Vue.prototype.getListData = function(url, page, params, cb, paramCb) {
+  let me = this,
+      limit = 10,
+      start
+    if(page === 1) {
+      start = 0
+    } else {
+      start = limit * (page - 1)
+    }
+    let _params = { start, limit }
+    for(let x in params) {
+      if(!params[x]) {
+        delete params[x]
+      }
+    }
+    Object.assign(_params, params)
+    paramCb && paramCb(_params)
+    this.post(url, _params, (response) => {
+      cb(response.data, response.total)
+    })
 }
 
 Vue.prototype.formatCreateTime = function(time) {

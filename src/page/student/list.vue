@@ -1,47 +1,28 @@
 <template>
   <div id="student-list">
-    <div class="tbar clear">
-      <div class="title">学员列表</div>
-      <div class="btn-wrap">
-        <el-tooltip content="刷新" placement="left" >
-          <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="refresh"></el-button>
-        </el-tooltip>
-        <el-button type="primary" size="mini" @click="handleAdd" >添加</el-button>
+    <v-title-bar>学员列表</v-title-bar>
+
+    <div class="btn-wrap clear">
+      <el-button class="left" type="primary" plain size="mini" @click="handleAdd">添加</el-button>
+      <div class="right">
+        <el-radio-group v-model="searchParam.status" size="mini">
+          <el-radio-button :label="1">全部</el-radio-button>
+          <el-radio-button :label="2">正常</el-radio-button>
+          <el-radio-button :label="3">未激活</el-radio-button>
+          <el-radio-button :label="4">已停用</el-radio-button>
+        </el-radio-group>
+        <el-select v-model="searchParam.courseId" placeholder="请选择实验室" size="mini" style="width:160px;">
+          <el-option v-for="item in courses" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <el-select v-model="searchParam.localId" placeholder="请选择校区" size="mini" style="width:160px;">
+          <el-option v-for="item in locals" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+        <el-input size="mini" v-model="searchParam.name" placeholder="输入手机号、名称识别搜索" style="width: 250px;"></el-input>
+        <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+        <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
     </div>
-    <div class="search-bar">
-      <el-radio-group v-model="searchParam.status" >
-        <el-radio :label="1">全部</el-radio>
-        <el-radio :label="2">正常</el-radio>
-        <el-radio :label="3">未激活</el-radio>
-        <el-radio :label="4">已停用</el-radio>
-      </el-radio-group>
-      <div class="searchCourse">
-        <el-select v-model="searchParam.courseId" placeholder="请选择实验室" size="small" style="width:150px;">
-          <el-option
-            v-for="item in courses"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </div>
-      <div class="searchLocal">
-        <el-select v-model="searchParam.localId" placeholder="请选择校区" size="small" style="width:160px;">
-          <el-option
-            v-for="item in locals"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </div>
-      <el-input placeholder="输入手机号、名称搜索" v-model="searchParam.name" size="small" style="width:230px;margin-left:20px;">
-        <el-tooltip slot="append" content="搜索" placement="right" >
-          <el-button icon="el-icon-search" @click="getData(1)"></el-button>
-        </el-tooltip>
-      </el-input>
-    </div>
+
     <div class="list-wrap">
       <el-table :data="list" border :row-style="tableRowStyle" style="width: 96%">
         <el-table-column prop="name" label="姓名"></el-table-column>
@@ -58,12 +39,12 @@
             <span>{{ formatCreateTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="150">
+        <el-table-column fixed="right" label="操作" width="220">
           <template slot-scope="scope">
-            <el-button @click="handleEdit(scope.row.id)" type="text" size="small">编辑</el-button>
-            <el-button v-if="scope.row.active && !scope.row.loginLock" type="text" size="small" @click="lock(scope.row.id)">停用</el-button>
-            <el-button v-if="scope.row.active && scope.row.loginLock" type="text" size="small" @click="unlock(scope.row.id)">启用</el-button>
-            <el-button type="text" size="small" @click="remove(scope.row.id)">删除</el-button>
+            <el-button type="primary" size="mini" plain @click="handleEdit(scope.row.id)">编辑</el-button>
+            <el-button v-if="!scope.row.loginLock" type="warning" plain size="small" @click="lock(scope.row.id)">停用</el-button>
+            <el-button v-if="scope.row.loginLock" type="success" plain size="small" @click="unlock(scope.row.id)">启用</el-button>
+            <el-button type="danger" plain size="small" @click="remove(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -86,7 +67,7 @@ export default {
   name: 'StudentList',
   created() {
     let me = this
-    this.loadCourseData((data) => me.courses = data)
+    this.post('admin/course/list', {}, (response) => me.courses = response.data)
     this.post('admin/local/all', {}, (response) => me.locals = response.data)
     this.getData(1)
   },
@@ -104,39 +85,24 @@ export default {
   },
   methods: {
     getData(page) {
-      let me = this,
-        limit = this.$pageSize,
-        start
-      if(page === 1) {
-        start = 0
-      } else {
-        start = this.$pageSize * (page - 1)
-      }
-      let params = { start, limit }
-      if(me.searchParam) {
-        for(let x in me.searchParam) {
-          if(!me.searchParam[x]) {
-            delete me.searchParam[x]
-          }
+      let me = this
+      me.getListData('admin/student/list', page, me.searchParam, (data, total) => {
+        me.total = total
+        me.list = data
+      }, (param) => {
+        if(param.status === 1) {
+          delete param['status']
         }
-        Object.assign(params, me.searchParam)
-        if(params.status === 1) {
-          delete params['status']
+        if(param.name) {
+          param.name = `%${param.name}%`
         }
-        if(params.name) {
-          params.name = `%${params.name}%`
-        }
-      }
-      this.post('admin/student/list', params, (response) => {
-        me.list = response.data
-        me.total = response.total
       })
     },
     onPageChange(page) {
       this.currentPage = page
       this.getData(page)
     },
-    refresh() {
+    handleRefresh() {
       this.searchParam = {
         status: 1
       }
@@ -232,37 +198,12 @@ export default {
     overflow-x: hidden;
   }
 
-  #student-list .tbar {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-  }
-
-  #student-list .tbar .title {
-    float: left;
-    font-size: 18px;
-  }
-
-  #student-list .tbar .btn-wrap {
-    float: right;
-  }
-
-  #student-list .search-bar {
-    margin: 12px 0;
-  }
-
-  #student-list .list-wrap {
+  .list-wrap, .btn-wrap {
     margin-bottom: 12px;
   }
   
-  #student-list .searchCourse {
-    margin-left: 12px;
-    display: inline-block;
+  .btn-wrap .right {
+    margin-right: 4%;
   }
 
-  #student-list .searchLocal {
-    margin-left: 12px;
-    display: inline-block;
-  }
-  
 </style>

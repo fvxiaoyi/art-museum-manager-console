@@ -1,12 +1,11 @@
 <template>
   <div id="subject-view">
-    <div class="tbar">
-      <div class="title" v-if="model.id">编辑专题</div>
-      <div class="title" v-else>添加专题</div>
-    </div>
+    <v-title-bar>
+      <span v-if="model.id">编辑专题</span>
+      <span v-else>添加专题</span>
+    </v-title-bar>
 
     <el-form label-width="100px" size="small">
-
       <el-form-item label="展示图">
         <el-upload class="avatar-uploader" action="" :show-file-list="false" :http-request="upload">
           <img v-if="model.displayImg" :src="model.originalUrl" class="avatar">
@@ -15,10 +14,10 @@
       </el-form-item>
       
       <el-form-item label="专题名称" required>
-        <el-input v-model="model.name" placeholder="请输入专题名称" style="width: 200px;"></el-input>
+        <el-input v-model="model.name" placeholder="请输入专题名称" style="width: 220px;"></el-input>
       </el-form-item>
       <el-form-item label="实验室" required>
-        <el-select v-model="model.courseId" placeholder="请选择所属实验室" >
+        <el-select v-model="model.courseId" placeholder="请选择所属实验室" style="width: 220px;" >
           <el-option
             v-for="item in courses"
             :key="item.id"
@@ -47,7 +46,7 @@
 export default {
   created() {
     let me = this
-    this.loadCourseData((data) => me.courses = data)
+    this.post('admin/course/list', {}, (response) => me.courses = response.data)
     if(me.$route.params.id) {
       me.loadData(me.$route.params.id);
     }
@@ -62,9 +61,7 @@ export default {
         originalUrl: '',
         thumbnailUrl: ''
       },
-      courses: [],
-      dialogImageUrl: '',
-      dialogVisible: false
+      courses: []
     }
   },
   methods: {
@@ -76,16 +73,6 @@ export default {
       this.post('admin/subject/get', {id}, (response) => {
         me.model = response.data
       })
-    },
-    handleUploadSuccess(response, file, fileList) {
-      this.model.displayImg = response.data.original_url
-    },
-    beforeAvatarUpload(file) {
-      const isLt1M = file.size / 1024 / 1024 < 2
-      if (!isLt1M) {
-        this.$message.error('上传图片大小不能超过 1MB!')
-      }
-      return isLt1M;
     },
     submit() {
       let me = this
@@ -129,17 +116,6 @@ export default {
     height: 100%;
     overflow: auto;
     overflow-x: hidden;
-  }
-
-  #subject-view .tbar {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-    margin-bottom: 12px;
-  }
-
-  #subject-view .tbar .title {
-    font-size: 18px;
   }
 
   .avatar-uploader-icon {

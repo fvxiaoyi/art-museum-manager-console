@@ -1,20 +1,15 @@
 <template>
   <div id="coupon-list">
-    <div class="title">预约试听列表</div>
+    <v-title-bar>预约试听列表</v-title-bar>
     <div class="btn-wrap">
-      <el-radio-group v-model="searchParam.status" >
-        <el-radio :label="1">全部</el-radio>
-        <el-radio :label="2">未回访</el-radio>
-        <el-radio :label="3">未试听</el-radio>
+      <el-radio-group v-model="searchParam.status" size="mini">
+        <el-radio-button :label="1">全部</el-radio-button>
+        <el-radio-button :label="2">未回访</el-radio-button>
+        <el-radio-button :label="3">未试听</el-radio-button>
       </el-radio-group>
-      <el-input placeholder="输入电话号码识别搜索" v-model="searchParam.phone" size="small" style="width:350px;margin:0 10px;">
-        <el-tooltip slot="append" content="搜索" placement="top" >
-          <el-button icon="el-icon-search" @click="getData(1)"></el-button>
-        </el-tooltip>
-      </el-input>
-      <el-tooltip content="刷新" placement="right" >
-        <el-button type="info" icon="el-icon-refresh" plain size="small" @click="handleRefresh" ></el-button>
-      </el-tooltip>
+      <el-input size="mini" v-model="searchParam.phone" placeholder="输入电话号码识别搜索" style="width: 250px;"></el-input>
+      <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+      <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
     </div>
     <div class="list-wrap">
       <el-table
@@ -49,7 +44,7 @@
         <el-table-column
           label="预约时间">
           <template slot-scope="scope">
-            <span>{{ formatCreateTime(scope.row.createTime) }}</span>
+            <span>{{ formatFullCreateTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -60,8 +55,8 @@
             <el-button type="warning" plain size="small" disabled v-if="scope.row.callBack" >回访</el-button>
             <el-button type="warning" plain size="small" @click="handleCallBack(scope.row.id, scope.$index)" v-else >回访</el-button>
 
-            <el-button type="warning" plain size="small" disabled v-if="scope.row.archive" >使用</el-button>
-            <el-button type="warning" plain size="small" @click="use(scope.row.id, scope.$index)" v-else >使用</el-button>
+            <el-button type="success" plain size="small" disabled v-if="scope.row.archive" >使用</el-button>
+            <el-button type="success" plain size="small" @click="use(scope.row.id, scope.$index)" v-else >使用</el-button>
             <el-button type="danger" plain size="small" @click="remove(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -101,32 +96,17 @@ export default {
   },
   methods: {
     getData(page) {
-      let me = this,
-        limit = this.$pageSize,
-        start
-      if(page === 1) {
-        start = 0
-      } else {
-        start = this.$pageSize * (page - 1)
-      }
-      let params = { start, limit }
-      if(me.searchParam) {
-        for(let x in me.searchParam) {
-          if(!me.searchParam[x]) {
-            delete me.searchParam[x]
-          }
+      let me = this
+      me.getListData('admin/coupon/list', page, me.searchParam, (data, total) => {
+        me.total = total
+        me.list = data
+      }, (param) => {
+        if(param.status === 1) {
+          delete param['status']
         }
-        Object.assign(params, me.searchParam)
-        if(params.status === 1) {
-          delete params['status']
+        if(param.phone) {
+          param.phone = `${param.phone}%`
         }
-        if(params.phone) {
-          params.phone = `${params.phone}%`
-        }
-      }
-      this.post('admin/coupon/list', params, (response) => {
-        me.list = response.data
-        me.total = response.total
       })
     },
     handleRefresh() {
@@ -166,14 +146,6 @@ export default {
       }
       return ''
     },
-    formatCreateTime(time) {
-      if(time) {
-        let d = new Date(time)
-        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
-      } else {
-        return ''
-      }
-    },
     use(id, index) {
       let me = this
       this.$confirm(`此操作是标记该家长已经试听, 是否继续?`, '提示', {
@@ -181,7 +153,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        
         this.post('admin/coupon/use', {id}, (response) => {
           this.$message({
             type: 'success',
@@ -226,11 +197,6 @@ export default {
       }).catch(() => {       
       })
     }
-  },
-  computed: {
-    pageSize() {
-      return this.$pageSize
-    }
   }
 }
 </script>
@@ -243,21 +209,8 @@ export default {
     overflow-x: hidden;
   }
 
-  #coupon-list .title {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-    font-size: 18px;
-  }
-
-  #coupon-list .btn-wrap {
-    height: 60px;
-    line-height: 60px;
-  }
-
-  #coupon-list .list-wrap {
+  .list-wrap, .btn-wrap {
     margin-bottom: 12px;
   }
-  
-  
+   
 </style>

@@ -17,7 +17,7 @@
       </div>
       <div id="body">
         <el-menu id="menu" class="el-menu-vertical"
-          default-active="1"
+          :default-active="currentActive"
           :collapse="isCollapse"
           background-color="#545c64"
           text-color="#fff"
@@ -167,6 +167,24 @@ export default {
   computed: {
     token() {
       return localStorage.getItem("token")
+    },
+    currentActive() {
+      let path = this.$route.path
+      if(path === '/article') {
+        return '1'
+      } else if(path === '/student') {
+        return '2'
+      } else if(path === '/coupon') {
+        return '3'
+      } else if(path === '/star') {
+        return '4'
+      } else if(path === '/local') {
+        return '5'
+      } else if(path === '/subject') {
+        return '6'
+      } else {
+        return ''
+      }
     }
   }
 }

@@ -1,31 +1,22 @@
 <template>
   <div id="local-list">
-    <div class="tbar clear">
-      <div class="title">校区列表</div>
-      <div class="btn-wrap">
-        <el-tooltip content="刷新" placement="left" >
-          <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh"></el-button>
-        </el-tooltip>
-        <el-button type="primary" size="mini" @click="handleShowAddDialog" >添加</el-button>
+    <v-title-bar>校区列表</v-title-bar>
+    <div class="btn-wrap clear">
+      <el-button class="left" type="primary" plain size="mini" @click="handleShowAddDialog">添加</el-button>
+      <div class="right">
+        <el-input size="mini" v-model="searchParam.name" placeholder="请输入校区名称识别搜索" style="width: 250px;"></el-input>
+        <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+        <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
     </div>
 
     <div class="list-wrap">
-      <el-table
-        :data="list"
-        border
-        style="width: 96%">
-        <el-table-column
-          prop="name"
-          label="校区名">
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="150">
+      <el-table :data="list" border style="width: 96%">
+        <el-table-column prop="name" label="校区名"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button @click="handleShowEditDialog(scope.row, scope.$index)" type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small" @click="remove(scope.row.id)">删除</el-button>
+            <el-button type="primary" size="mini" plain @click="handleShowEditDialog(scope.row, scope.$index)">编辑</el-button>
+            <el-button type="danger" size="mini" @click="remove(scope.row.id)" plain>删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -41,10 +32,7 @@
       >
     </el-pagination>
 
-    <el-dialog
-      title="添加校区"
-      :visible.sync="addDialogVisible"
-      width="30%">
+    <el-dialog title="添加校区" :visible.sync="addDialogVisible" width="30%">
       <el-input v-model="model.name" placeholder="请输入校区名称" ></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
@@ -52,10 +40,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog
-      title="修改校区"
-      :visible.sync="editDialogVisible"
-      width="30%">
+    <el-dialog title="修改校区" :visible.sync="editDialogVisible" width="30%">
       <el-input v-model="model.name" placeholder="请输入校区名称" ></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
@@ -74,6 +59,7 @@ export default {
   },
   data () {
     return {
+      searchParam: {},
       total: 0,
       currentPage: 1,
       addDialogVisible: false,
@@ -87,17 +73,14 @@ export default {
   },
   methods: {
     getData(page) {
-      let me = this,
-        limit = this.$pageSize,
-        start
-      if(page === 1) {
-        start = 0
-      } else {
-        start = this.$pageSize * (page - 1)
-      }
-      this.post('admin/local/list', { start, limit }, (response) => {
-        me.total = response.total
-        me.list = response.data
+      let me = this
+      me.getListData('admin/local/list', page, me.searchParam, (data, total) => {
+        me.total = total
+        me.list = data
+      }, (param) => {
+        if(param.name) {
+          param.name = `%${param.name}%`
+        }
       })
     },
     handleAdd() {
@@ -112,6 +95,7 @@ export default {
       })
     },
     handleRefresh() {
+      this.searchParam = {}
       this.getData(1)
     },
     handleEdit() {
@@ -163,29 +147,18 @@ export default {
 
 
 <style scoped>
+
   #local-list {
     height: 100%;
     overflow: auto;
     overflow-x: hidden;
   }
-
-  #local-list .tbar {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-    margin-bottom: 12px;
-  }
-
-  #local-list .tbar .title {
-    float: left;
-    font-size: 18px;
-  }
-
-  #local-list .tbar .btn-wrap {
-    float: right;
-  }
   
-  #local-list .list-wrap {
+  .list-wrap, .btn-wrap {
     margin-bottom: 12px;
+  }
+
+  .btn-wrap .right {
+    margin-right: 4%;
   }
 </style>

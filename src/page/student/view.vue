@@ -1,9 +1,9 @@
 <template>
   <div id="student-view">
-    <div class="tbar">
-      <div class="title" v-if="model.id">编辑学员</div>
-      <div class="title" v-else>添加学员</div>
-    </div>
+    <v-title-bar>
+      <span v-if="model.id">编辑学员</span>
+      <span v-else>添加学员</span>
+    </v-title-bar>
 
     <el-form label-width="100px" size="small">
       <el-form-item label="学员名称" required>
@@ -27,10 +27,10 @@
       </el-form-item>
 
       <el-form-item label="家长名称" required>
-        <el-input v-model="model.parentName" placeholder="请输入学员名称" style="width: 200px;"></el-input>
+        <el-input v-model="model.parentName" placeholder="请输入家长名称" style="width: 200px;"></el-input>
       </el-form-item>
       <el-form-item label="家长电话" required>
-        <el-input v-model="model.phone" placeholder="请输入学员名称" style="width: 200px;"></el-input>
+        <el-input v-model="model.phone" placeholder="请输入家长电话" style="width: 200px;"></el-input>
       </el-form-item>
       <el-form-item label="校区" required>
         <el-select v-model="model.localId" placeholder="请选择所属校区" style="width: 200px;">
@@ -42,7 +42,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="报名课程">
+      <el-form-item label="实验室">
         <el-checkbox-group v-model="selectCourse">
           <el-checkbox :key="item.id" :label="item.name" v-for="item in courses"></el-checkbox>
         </el-checkbox-group>
@@ -61,7 +61,7 @@ export default {
   name: 'studentList',
   created() {
     let me = this
-    this.loadCourseData((data) => me.courses = data)
+    this.post('admin/course/list', {}, (response) => me.courses = response.data)
     this.post('admin/local/all', {}, (response) => me.locals = response.data)
     if(me.$route.params.id) {
       me.loadData(me.$route.params.id);
@@ -120,16 +120,5 @@ export default {
     height: 100%;
     overflow: auto;
     overflow-x: hidden;
-  }
-  
-  #student-view .tbar {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-    margin-bottom: 12px;
-  }
-
-  #student-view .tbar .title {
-    font-size: 18px;
   }
 </style>

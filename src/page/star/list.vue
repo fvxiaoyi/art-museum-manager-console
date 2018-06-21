@@ -1,10 +1,8 @@
 <template>
   <div id="star-list">
-    <div class="tbar clear">
-      <div class="title">点赞查询</div>
-    </div>
-    <div class="search-bar">
-      <el-input placeholder="输入学员名字、家长电话识别搜索" v-model="searchParam.name" size="small" style="width:350px;">
+    <v-title-bar>点赞查询</v-title-bar>
+    <div>
+      <el-input placeholder="输入学员名字、家长电话识别搜索" v-model="searchParam.name" size="mini" style="width:350px;">
         <el-tooltip slot="append" content="搜索" placement="right" >
           <el-button icon="el-icon-search" @click="search"></el-button>
         </el-tooltip>
@@ -20,7 +18,7 @@
         <el-table-column prop="totalStar" label="总赞"></el-table-column>
         <el-table-column fixed="right" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="detail(scope.row.id)">查看详细</el-button>
+            <el-button type="primary" size="mini" plain @click="detail(scope.row.id)">查看详细</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -28,15 +26,21 @@
 
     <el-dialog title="年度点赞统计" :visible.sync="dialogVisible" width="520px">
       <div>
-        <div class="clear">
-          <div class="left">
-            <el-date-picker value-format="yyyy" v-model="year" type="year" placeholder="选择年" :clearable="false"></el-date-picker>
-            <el-button icon="el-icon-search" @click="detailSearch(detailStar.id)"></el-button>
+        <div class="clear" style="margin-bottom: 20px;">
+          <div class="left" style="height: 28px;line-height: 28px;">
+            <span>{{detailStar.name}}</span>
+            <span style="color: #409EFF;font-weight: bold;">{{searchYear}}</span>
+            <span>年</span>
+            <span style="color: #F56C6C;font-weight: bold;">{{detailStar.totalYearStar}}</span> 
+            <span> 个赞, </span>
+            <span>总共 </span>
+            <span style="color: #F56C6C;font-weight: bold;">{{detailStar.totalStar}}</span>
+            <span> 个赞</span>
           </div>
-          <span class="right">{{detailStar.name}} 总共 <span style="color: #F56C6C;font-weight: bold;">{{detailStar.totalStar}}</span> 个赞</span>
-        </div>
-        <div class="cell">
-          <span>{{year}} 年 <span style="color: #F56C6C;font-weight: bold;">{{detailStar.totalYearStar}}</span> 个赞</span>
+          <div class="right">
+            <el-date-picker size="mini" value-format="yyyy" v-model="year" type="year" placeholder="选择年" :clearable="false" style="width: 120px;"></el-date-picker>
+            <el-button size="mini" icon="el-icon-search" @click="detail(detailStar.id)"></el-button>
+          </div>
         </div>
         <div>
           <table class="detailTable">
@@ -88,7 +92,8 @@ export default {
       searchParam: {},
       list: [],
       detailStar: {},
-      year: new Date().getFullYear() + ''
+      year: new Date().getFullYear() + '',
+      searchYear: null
     }
   },
   methods: {
@@ -100,17 +105,9 @@ export default {
       let me = this
       this.post('admin/star/getForYear', { id, year: me.year }, (response) => {
         me.dialogVisible = true
+        me.searchYear = me.year
         me.detailStar = response.data
       })
-    },
-    detailSearch(id) {
-      let me = this
-      if(me.year) {
-        this.post('admin/star/getForYear', { id, year: me.year }, (response) => {
-          me.dialogVisible = true
-          me.detailStar = response.data
-        })
-      }
     }
   }
 }
@@ -122,18 +119,6 @@ export default {
     height: 100%;
     overflow: auto;
     overflow-x: hidden;
-  }
-
-  #star-list .tbar {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-    margin-bottom: 12px;
-  }
-
-  #star-list .tbar .title {
-    float: left;
-    font-size: 18px;
   }
 
   #star-list .list-wrap {
@@ -151,11 +136,4 @@ export default {
     font-weight: bold;
   }
 
-  #star-list .cell {
-    height: 20px;
-    line-height: 20px;
-    font-size: 14px;
-    margin-top: 14px;
-    margin-bottom: 10px;
-  }
 </style>

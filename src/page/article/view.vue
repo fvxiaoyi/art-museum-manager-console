@@ -1,9 +1,9 @@
 <template>
   <div id="article-view">
-    <div class="tbar">
-      <div class="title" v-if="model.id">编辑作品</div>
-      <div class="title" v-else>添加作品</div>
-    </div>
+    <v-title-bar>
+      <span v-if="model.id">编辑作品</span>
+      <span v-else>添加作品</span>
+    </v-title-bar>
     <el-form label-width="100px" size="small">
       <el-form-item label="预览图">
         <el-upload class="avatar-uploader" action="" :show-file-list="false" :http-request="upload">
@@ -50,7 +50,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="作品尺寸">
-        <el-select v-model="model.size" placeholder="请选择作品类型" style="width: 200px;">
+        <el-select v-model="model.size" placeholder="请选择作品尺寸" style="width: 200px;">
           <el-option v-for="item in size"
             :key="item.value"
             :label="item.label"
@@ -80,7 +80,7 @@ export default {
   name: 'articleView',
   created() {
     let me = this
-    this.loadCourseData((data) => me.courses = data)
+    this.post('admin/course/list', {}, (response) => me.courses = response.data)
     if(me.$route.params.id) {
       me.getData(me.$route.params.id);
     }
@@ -90,7 +90,7 @@ export default {
       imgMaskVisible: false,
       dialogVisible: false,
       model: {
-        size: 'FOUR_K',
+        size: '',
         displayImg: '',
         height: 0,
         width: 0,
@@ -179,17 +179,6 @@ export default {
     height: 100%;
     overflow: auto;
     overflow-x: hidden;
-  }
-
-  #article-view .tbar {
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #DDDDDD;
-    margin-bottom: 12px;
-  }
-
-  #article-view .tbar .title {
-    font-size: 18px;
   }
 
   .img-wrap {
