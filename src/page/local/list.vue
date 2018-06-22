@@ -74,7 +74,7 @@ export default {
   methods: {
     getData(page) {
       let me = this
-      me.getListData('admin/local/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/local/list', page, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
       }, (param) => {
@@ -85,7 +85,7 @@ export default {
     },
     handleAdd() {
       let me = this
-      this.post('admin/local/add', me.model, (response) => {
+      this.post('/admin/local/add', me.model, (response) => {
         me.$message({
           message: '添加成功',
           type: 'success'
@@ -100,7 +100,7 @@ export default {
     },
     handleEdit() {
       let me = this
-      this.post('admin/local/maintain', me.model, (response) => {
+      this.post('/admin/local/maintain', me.model, (response) => {
         me.$message({
           message: '修改成功',
           type: 'success'
@@ -131,7 +131,7 @@ export default {
         type: 'warning'
       }).then(() => {
         let me = this
-        this.post('admin/local/remove', {id}, (response) => {
+        this.post('/admin/local/remove', {id}, (response) => {
           me.$message({
             message: '删除成功',
             type: 'success'

@@ -99,11 +99,11 @@ export default {
   methods: {
     search() {
       let me = this
-      this.post('admin/star/list', { name: `%${me.searchParam.name}%`}, (response) => me.list = response.data)
+      this.post('/admin/star/list', { name: `%${me.searchParam.name}%`}, (response) => me.list = response.data)
     },
     detail(id) {
       let me = this
-      this.post('admin/star/getForYear', { id, year: me.year }, (response) => {
+      this.post('/admin/star/getForYear', { id, year: me.year }, (response) => {
         me.dialogVisible = true
         me.searchYear = me.year
         me.detailStar = response.data

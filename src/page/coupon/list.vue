@@ -97,7 +97,7 @@ export default {
   methods: {
     getData(page) {
       let me = this
-      me.getListData('admin/coupon/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/coupon/list', page, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
       }, (param) => {
@@ -153,7 +153,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/coupon/use', {id}, (response) => {
+        this.post('/admin/coupon/use', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '操作成功!'
@@ -170,7 +170,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/coupon/callBack', {id}, (response) => {
+        this.post('/admin/coupon/callBack', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '操作成功!'
@@ -187,7 +187,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/coupon/remove', {id}, (response) => {
+        this.post('/admin/coupon/remove', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '删除成功!'

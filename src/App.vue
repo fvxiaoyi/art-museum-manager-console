@@ -120,7 +120,7 @@ export default {
     changePassword() {
       let me = this
       if(this.password && this.password.length >= 4) {
-        this.post('admin/security/changePassword', {password: me.password}, (response) => {
+        this.post('/admin/security/changePassword', {password: me.password}, (response) => {
           this.passwordDialogVisible = false;
           this.$message({
             message: '修改成功',
@@ -136,7 +136,7 @@ export default {
     },
     logout() {
       let me = this
-      this.post('admin/security/logout', {}, (response) => {
+      this.post('/admin/security/logout', {}, (response) => {
         me.$message({
           message: '退出成功',
           type: 'success'
@@ -148,7 +148,7 @@ export default {
     login() {
       let me = this
       if(this.account && this.account.length > 0 && this.accountPassword && this.accountPassword.length > 0) {
-        this.post('admin/security/login', { accountName: me.account, password: me.accountPassword }, (response) => {
+        this.post('/admin/security/login', { accountName: me.account, password: me.accountPassword }, (response) => {
           me.$message({
             message: '登录成功',
             type: 'success'

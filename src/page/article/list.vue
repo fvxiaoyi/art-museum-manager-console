@@ -89,9 +89,9 @@ export default {
   name: 'ArticleList',
   created() {
     let me = this
-    this.post('admin/course/list', {}, (response) => me.courses = response.data)
-    this.post('admin/local/all', {}, (response) => me.locals = response.data)
-    this.post('admin/subject/all', {}, (response) => me.subjects = response.data)
+    this.post('/admin/course/list', {}, (response) => me.courses = response.data)
+    this.post('/admin/local/all', {}, (response) => me.locals = response.data)
+    this.post('/admin/subject/all', {}, (response) => me.subjects = response.data)
     this.getData(1)
   },
   data () {
@@ -111,7 +111,7 @@ export default {
   methods: {
     getData(page) {
       let me = this
-      me.getListData('admin/art/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/art/list', page, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
       }, (param) => {
@@ -130,7 +130,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/art/remove', {id}, (response) => {
+        this.post('/admin/art/remove', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -147,7 +147,7 @@ export default {
     handleRefresh() {
       let me = this
       this.searchParam = {}
-      this.post('admin/subject/all', {}, (response) => me.subjects = response.data)
+      this.post('/admin/subject/all', {}, (response) => me.subjects = response.data)
       this.getData(1)
     },
     handleAdd() {
@@ -158,19 +158,19 @@ export default {
       if(newValue) {
         me.subject = null
         me.student = null
-        this.post('admin/subject/all', {courseId: newValue}, (response) => me.subjects = response.data)
+        this.post('/admin/subject/all', {courseId: newValue}, (response) => me.subjects = response.data)
       }
     },
     comment(articleId) {
       let me = this
-      this.post('admin/comment/list', { articleId }, (response) => {
+      this.post('/admin/comment/list', { articleId }, (response) => {
         me.comments = response.data
         me.commentDialogVisible = true
       })
     },
     removeComment(id, articleId) {
       let me = this
-      this.post('admin/comment/remove', { id }, (response) => {
+      this.post('/admin/comment/remove', { id }, (response) => {
         me.comment(articleId)
       })
     }

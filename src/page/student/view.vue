@@ -22,7 +22,7 @@
       <el-form-item label="性别" required>
         <el-radio-group v-model="model.sex">
           <el-radio label="BOY">男孩</el-radio>
-          <el-radio label="GRIL">女孩</el-radio>
+          <el-radio label="GIRL">女孩</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -61,8 +61,8 @@ export default {
   name: 'studentList',
   created() {
     let me = this
-    this.post('admin/course/list', {}, (response) => me.courses = response.data)
-    this.post('admin/local/all', {}, (response) => me.locals = response.data)
+    this.post('/admin/course/list', {}, (response) => me.courses = response.data)
+    this.post('/admin/local/all', {}, (response) => me.locals = response.data)
     if(me.$route.params.id) {
       me.loadData(me.$route.params.id);
     }
@@ -83,7 +83,7 @@ export default {
     },
     loadData(id) {
       let me = this
-      this.post('admin/student/get', {id}, (response) => {
+      this.post('/admin/student/get', {id}, (response) => {
         me.model = response.data
         me.selectCourse = me.model.courses.map(m => m.name)
       })
@@ -101,13 +101,13 @@ export default {
           message: '修改成功',
           type: 'success'
         })
-        this.post(`admin/student/update`, me.model, (response) => me.$router.push('/student'))
+        this.post('/admin/student/update', me.model, (response) => me.$router.push('/student'))
       } else {
         me.$message({
           message: '添加成功',
           type: 'success'
         })
-        this.post(`admin/student/add`, me.model, (response) => me.$router.push('/student'))
+        this.post('admin/student/add', me.model, (response) => me.$router.push('/student'))
       }
     }
   }

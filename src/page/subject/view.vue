@@ -46,7 +46,7 @@
 export default {
   created() {
     let me = this
-    this.post('admin/course/list', {}, (response) => me.courses = response.data)
+    this.post('/admin/course/list', {}, (response) => me.courses = response.data)
     if(me.$route.params.id) {
       me.loadData(me.$route.params.id);
     }
@@ -70,21 +70,21 @@ export default {
     },
     loadData(id) {
       let me = this
-      this.post('admin/subject/get', {id}, (response) => {
+      this.post('/admin/subject/get', {id}, (response) => {
         me.model = response.data
       })
     },
     submit() {
       let me = this
       if(me.$route.params.id) {
-        this.post('admin/subject/maintain', me.model, (response) => {
+        this.post('/admin/subject/maintain', me.model, (response) => {
           me.$message({
             message: '修改成功',
             type: 'success'
           })
         })
       } else {
-        this.post(`admin/subject/add`, me.model, (response) => {
+        this.post('/admin/subject/add', me.model, (response) => {
           me.$message({
             message: '添加成功',
             type: 'success'
@@ -98,7 +98,7 @@ export default {
         me = this
       formData.append('file', item.file)
       formData.append('type', 'banner')
-      this.post('admin/store/upload', formData, (response) => {
+      this.post('/admin/store/upload', formData, (response) => {
         me.model.displayImg = response.data.fileName
         me.model.originalUrl = response.data.original_url
         me.model.thumbnailUrl = response.data.thumbnail_url

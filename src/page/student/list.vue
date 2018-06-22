@@ -67,8 +67,8 @@ export default {
   name: 'StudentList',
   created() {
     let me = this
-    this.post('admin/course/list', {}, (response) => me.courses = response.data)
-    this.post('admin/local/all', {}, (response) => me.locals = response.data)
+    this.post('/admin/course/list', {}, (response) => me.courses = response.data)
+    this.post('/admin/local/all', {}, (response) => me.locals = response.data)
     this.getData(1)
   },
   data () {
@@ -86,7 +86,7 @@ export default {
   methods: {
     getData(page) {
       let me = this
-      me.getListData('admin/student/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/student/list', page, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
       }, (param) => {
@@ -129,7 +129,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/student/lock', {id}, (response) => {
+        this.post('/admin/student/lock', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '停用成功!'
@@ -146,7 +146,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/student/unlock', {id}, (response) => {
+        this.post('/admin/student/unlock', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '启用成功!'
@@ -163,7 +163,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.post('admin/student/remove', {id}, (response) => {
+        this.post('/admin/student/remove', {id}, (response) => {
           this.$message({
             type: 'success',
             message: '删除成功!'

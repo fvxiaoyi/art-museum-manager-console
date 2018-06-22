@@ -70,7 +70,7 @@ export default {
   name: 'subjectList',
   created() {
     let me = this
-    this.post('admin/course/list', {}, (response) => me.courses = response.data)
+    this.post('/admin/course/list', {}, (response) => me.courses = response.data)
     this.getData(1)
   },
   data () {
@@ -102,7 +102,7 @@ export default {
     },
     handleHot(id, hot, index) {
       let me = this
-      this.post('admin/subject/hot', { id: id, hot: hot }, (response) => {
+      this.post('/admin/subject/hot', { id: id, hot: hot }, (response) => {
         me.$message({
           message: hot ? '推荐成功' : '取消成功',
           type: 'success'
@@ -112,7 +112,7 @@ export default {
     },
     getData(page) {
       let me = this
-      me.getListData('admin/subject/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/subject/list', page, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
       }, (param) => {
@@ -130,7 +130,7 @@ export default {
     },
     remove(id) {
       let me = this
-      this.post(`admin/subject/remove/${id}`, {}, (response) => {
+      this.post('/admin/subject/remove', {id}, (response) => {
         me.$message({
           message: '删除成功',
           type: 'success'
