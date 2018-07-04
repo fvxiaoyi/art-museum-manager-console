@@ -26,6 +26,9 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="简介">
+        <el-input v-model="model.remark" placeholder="请输入专题简介（简短描述）" style="width: 220px;"></el-input>
+      </el-form-item>
       <el-form-item label="推荐" required>
         <el-radio-group v-model="model.hot">
           <el-radio :label="true">是</el-radio>

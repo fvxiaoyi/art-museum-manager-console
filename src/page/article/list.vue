@@ -14,7 +14,7 @@
           <el-option v-for="item in locals" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <el-input size="mini" v-model="searchParam.name" placeholder="输入作品、学员名称识别搜索" style="width: 250px;"></el-input>
-        <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+        <el-button type="info" size="mini" plain @click="handleSearch" >查找</el-button>
         <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
     </div>
@@ -87,12 +87,15 @@
 <script>
 export default {
   name: 'ArticleList',
+  activated() {
+    this.getData()
+  },
   created() {
     let me = this
     this.post('/admin/course/list', {}, (response) => me.courses = response.data)
     this.post('/admin/local/all', {}, (response) => me.locals = response.data)
     this.post('/admin/subject/all', {}, (response) => me.subjects = response.data)
-    this.getData(1)
+    this.getData()
   },
   data () {
     return {
@@ -109,11 +112,15 @@ export default {
     }
   },
   methods: {
-    getData(page) {
+    getData() {
       let me = this
-      me.getListData('/admin/art/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/art/list', me.currentPage, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
+        if(me.currentPage > 1 && me.list.length == 0) {
+          me.currentPage --
+          me.getData()
+        }
       }, (param) => {
         if(param.name) {
           param.name = `%${param.name}%`
@@ -135,20 +142,25 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
-          me.getData(me.currentPage)
+          me.getData()
         })
       }).catch(() => {       
       })
     },
     onPageChange(page) {
       this.currentPage = page
-      this.getData(page)
+      this.getData()
     },
     handleRefresh() {
       let me = this
       this.searchParam = {}
+      this.currentPage = 1
       this.post('/admin/subject/all', {}, (response) => me.subjects = response.data)
-      this.getData(1)
+      this.getData()
+    },
+    handleSearch() {
+      this.currentPage = 1
+      this.getData()
     },
     handleAdd() {
       this.$router.push('/article/view')
@@ -218,6 +230,8 @@ export default {
   }
 
   .comment-wrap .content span{
+    word-wrap: break-word;
+    word-break: break-all;
     flex: 1;
   }
  

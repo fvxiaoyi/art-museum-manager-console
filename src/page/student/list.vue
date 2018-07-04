@@ -18,7 +18,7 @@
           <el-option v-for="item in locals" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <el-input size="mini" v-model="searchParam.name" placeholder="输入手机号、名称识别搜索" style="width: 250px;"></el-input>
-        <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+        <el-button type="info" size="mini" plain @click="handleSearch" >查找</el-button>
         <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
     </div>
@@ -65,11 +65,14 @@
 <script>
 export default {
   name: 'StudentList',
+  activated() {
+    this.getData()
+  },
   created() {
     let me = this
     this.post('/admin/course/list', {}, (response) => me.courses = response.data)
     this.post('/admin/local/all', {}, (response) => me.locals = response.data)
-    this.getData(1)
+    this.getData()
   },
   data () {
     return {
@@ -84,11 +87,15 @@ export default {
     }
   },
   methods: {
-    getData(page) {
+    getData() {
       let me = this
-      me.getListData('/admin/student/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/student/list', me.currentPage, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
+        if(me.currentPage > 1 && me.list.length == 0) {
+          me.currentPage --
+          me.getData()
+        }
       }, (param) => {
         if(param.status === 1) {
           delete param['status']
@@ -100,13 +107,18 @@ export default {
     },
     onPageChange(page) {
       this.currentPage = page
-      this.getData(page)
+      this.getData()
     },
     handleRefresh() {
+      this.currentPage = 1
       this.searchParam = {
         status: 1
       }
-      this.getData(1)
+      this.getData()
+    },
+    handleSearch() {
+      this.currentPage = 1
+      this.getData()
     },
     tableRowStyle({row, rowIndex}) {
       if (row.loginLock) {
@@ -134,7 +146,7 @@ export default {
             type: 'success',
             message: '停用成功!'
           })
-          me.getData(me.currentPage)
+          me.getData()
         })
       }).catch(() => {        
       })
@@ -151,7 +163,7 @@ export default {
             type: 'success',
             message: '启用成功!'
           })
-          me.getData(me.currentPage)
+          me.getData()
         })
       }).catch(() => {        
       })
@@ -168,7 +180,7 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
-          me.getData(currentPage)
+          me.getData()
         })
       }).catch(() => {       
       })

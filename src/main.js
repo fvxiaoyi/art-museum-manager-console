@@ -1,6 +1,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
+import Vuex from 'vuex'
 import App from './App'
 import router from './router'
 import axios from 'axios'
@@ -34,6 +35,9 @@ import {
   DatePicker
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import storeConfig from './store/index'
+
+Vue.use(Vuex)
 
 Vue.component(Button.name, Button)
 Vue.component(Select.name, Select)
@@ -85,7 +89,7 @@ axios.interceptors.request.use(
 
 Vue.prototype.post = function(url, param, cb) {
 	let me = this
-	me.$http.post(url, param).then(function (response) {
+	me.$http.post('http://127.0.0.1:8080' + url, param).then(function (response) {
 		if(response.data.success) {
 			cb(response.data)
 		} else {
@@ -156,11 +160,14 @@ Vue.prototype.formatFullCreateTime = function(time) {
   }
 }
 
+const store = new Vuex.Store(storeConfig)
+
 Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

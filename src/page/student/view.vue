@@ -93,21 +93,23 @@ export default {
       if(me.selectCourse.length === 0) {
         me.model.courseIds = []
       } else {
-        console.log(1)
         me.model.courseIds = me.courses.filter(x => me.selectCourse.indexOf(x.name) !== -1).map(m => m.id)
       }
       if(me.$route.params.id) {
-        me.$message({
-          message: '修改成功',
-          type: 'success'
+        this.post('/admin/student/update', me.model, (response) => {
+          me.$message({
+            message: '修改成功',
+            type: 'success'
+          })
         })
-        this.post('/admin/student/update', me.model, (response) => me.$router.push('/student'))
       } else {
-        me.$message({
-          message: '添加成功',
-          type: 'success'
+        this.post('/admin/student/add', me.model, (response) => {
+          me.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+           me.$router.push('/student')
         })
-        this.post('admin/student/add', me.model, (response) => me.$router.push('/student'))
       }
     }
   }

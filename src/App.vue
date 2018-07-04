@@ -37,21 +37,23 @@
             <i class="el-icon-phone-outline"></i>
             <span slot="title">预约试听</span>
           </el-menu-item>
-          <el-menu-item index="4" @click="onMenuItemClick('star')">
-            <i class="el-icon-star-off"></i>
-            <span slot="title">点赞查询</span>
-          </el-menu-item>
-          <el-menu-item index="5" @click="onMenuItemClick('local')">
-            <i class="el-icon-location-outline"></i>
-            <span slot="title">校区</span>
-          </el-menu-item>
-          <el-menu-item index="6" @click="onMenuItemClick('subject')">
+          <el-menu-item index="4" @click="onMenuItemClick('subject')">
             <i class="el-icon-edit"></i>
             <span slot="title">专题</span>
           </el-menu-item>
+          <el-menu-item index="5" @click="onMenuItemClick('star')">
+            <i class="el-icon-star-off"></i>
+            <span slot="title">点赞查询</span>
+          </el-menu-item>
+          <el-menu-item index="6" @click="onMenuItemClick('local')">
+            <i class="el-icon-location-outline"></i>
+            <span slot="title">校区</span>
+          </el-menu-item>
         </el-menu>
         <div id="contentWrap">
-          <router-view></router-view>
+          <keep-alive include="ArticleList,StudentList">
+            <router-view></router-view>
+          </keep-alive>
         </div>
       </div>
       <el-dialog
@@ -154,6 +156,7 @@ export default {
             type: 'success'
           })
           localStorage.setItem("token",response.data.token)
+          this.$router.push('/article')
           location.reload()
         })
       } else {
@@ -176,11 +179,11 @@ export default {
         return '2'
       } else if(path === '/coupon') {
         return '3'
-      } else if(path === '/star') {
-        return '4'
-      } else if(path === '/local') {
-        return '5'
       } else if(path === '/subject') {
+        return '4'
+      } else if(path === '/star') {
+        return '5'
+      } else if(path === '/local') {
         return '6'
       } else {
         return ''

@@ -166,9 +166,6 @@ export default {
         me.model.thumbnailUrl = response.data.thumbnail_url
       })
     }
-  },
-  computed: {
-    
   }
 }
 </script>
