@@ -8,7 +8,7 @@
         <el-radio-button :label="3">未试听</el-radio-button>
       </el-radio-group>
       <el-input size="mini" v-model="searchParam.phone" placeholder="输入电话号码识别搜索" style="width: 250px;"></el-input>
-      <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+      <el-button type="info" size="mini" plain @click="handleSearch" >查找</el-button>
       <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
     </div>
     <div class="list-wrap">
@@ -17,47 +17,32 @@
         border
         :row-style="tableRowStyle"
         style="width: 96%">
-        <el-table-column
-          prop="name"
-          label="名字">
-        </el-table-column>
-        <el-table-column
-          prop="age"
-          label="年龄">
-        </el-table-column>
-        <el-table-column
-          prop="phone"
-          label="家长电话" width="150">
-        </el-table-column>
-        <el-table-column
-          label="回访时间" width="150">
+        <el-table-column prop="name" label="名字"></el-table-column>
+        <el-table-column prop="age" label="年龄"></el-table-column>
+        <el-table-column prop="phone" label="家长电话" width="150"></el-table-column>
+        <el-table-column label="回访时间" width="150">
           <template slot-scope="scope">
             <span>{{renderTimePoint(scope.row.timePoint)}}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="状态">
+        <el-table-column label="状态">
           <template slot-scope="scope">
             <span>{{renderStatus(scope.row)}}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="预约时间">
+        <el-table-column label="预约时间">
           <template slot-scope="scope">
             <span>{{ formatFullCreateTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="230">
+        <el-table-column fixed="right" label="操作" width="290">
           <template slot-scope="scope">
-            <el-button type="warning" plain size="small" disabled v-if="scope.row.callBack" >回访</el-button>
-            <el-button type="warning" plain size="small" @click="handleCallBack(scope.row.id, scope.$index)" v-else >回访</el-button>
-
-            <el-button type="success" plain size="small" disabled v-if="scope.row.archive" >使用</el-button>
-            <el-button type="success" plain size="small" @click="use(scope.row.id, scope.$index)" v-else >使用</el-button>
-            <el-button type="danger" plain size="small" @click="remove(scope.row.id)">删除</el-button>
+            <el-button type="primary" size="mini" plain @click="remark(scope.row.id, scope.row.remark)">备注</el-button>
+            <el-button type="warning" plain size="mini" disabled v-if="scope.row.callBack" >回访</el-button>
+            <el-button type="warning" plain size="mini" @click="handleCallBack(scope.row.id, scope.$index)" v-else >回访</el-button>
+            <el-button type="success" plain size="mini" disabled v-if="scope.row.archive" >使用</el-button>
+            <el-button type="success" plain size="mini" @click="use(scope.row.id, scope.$index)" v-else >使用</el-button>
+            <el-button type="danger" plain size="mini" @click="remove(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -72,6 +57,13 @@
       >
     </el-pagination>
 
+    <el-dialog title="添加备注" :visible.sync="remarkDialogVisible" width="480px">
+      <div>
+        <el-input v-model="model.remark" type="textarea" placeholder="请输入作品备注" style="width: 400px;" :rows="10"></el-input>
+        <el-button type="primary" style="margin-top:20px;" @click="submitRemark">提交</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -79,11 +71,11 @@
 export default {
   name: 'CouponList',
   created() {
-    let me = this
-    this.getData(1)
+    this.getData()
   },
   data () {
     return {
+      remarkDialogVisible: false,
       searchCode: null,
       total: 80,
       list:[],
@@ -91,15 +83,22 @@ export default {
       currentPage: 1,
       searchParam: {
         status: 1
+      },
+      model: {
+        remark: null
       }
     }
   },
   methods: {
-    getData(page) {
+    getData() {
       let me = this
-      me.getListData('/admin/coupon/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/coupon/list', me.currentPage, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
+        if(me.currentPage > 1 && me.list.length == 0) {
+          me.currentPage --
+          me.getData()
+        }
       }, (param) => {
         if(param.status === 1) {
           delete param['status']
@@ -113,11 +112,16 @@ export default {
       this.searchParam = {
         status: 1
       }
-      this.getData(1)
+      this.currentPage = 1
+      this.getData()
+    },
+    handleSearch() {
+      this.currentPage = 1
+      this.getData()
     },
     onPageChange(page) {
       this.currentPage = page
-      this.getData(page)
+      this.getData()
     },
     renderTimePoint(timePoint) {
       if(timePoint==='MORNING') {
@@ -192,9 +196,24 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
-          me.getData(1)
+          me.getData()
         })
       }).catch(() => {       
+      })
+    },
+    remark(id, remark) {
+      this.model.id = id
+      this.model.remark = remark
+      this.remarkDialogVisible = true
+    },
+    submitRemark() {
+      this.post('/admin/coupon/addRemark', this.model, (response) => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+        this.remarkDialogVisible = false
+        this.getData()
       })
     }
   }

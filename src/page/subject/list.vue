@@ -18,7 +18,7 @@
           </el-option>
         </el-select>
         <el-input size="mini" v-model="searchParam.name" placeholder="输入专题名称识别搜索" style="width: 250px;"></el-input>
-        <el-button type="info" size="mini" plain @click="getData(1)" >查找</el-button>
+        <el-button type="info" size="mini" plain @click="handleSearch" >查找</el-button>
         <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
     </div>
@@ -68,10 +68,13 @@
 <script>
 export default {
   name: 'subjectList',
+  activated() {
+    this.getData()
+  },
   created() {
     let me = this
     this.post('/admin/course/list', {}, (response) => me.courses = response.data)
-    this.getData(1)
+    this.getData()
   },
   data () {
     return {
@@ -94,11 +97,16 @@ export default {
       this.searchParam = {
         hot: 1
       }
-      this.getData(1)
+      this.currentPage = 1
+      this.getData()
+    },
+    handleSearch() {
+      this.currentPage = 1
+      this.getData()
     },
     onPageChange(page) {
       this.currentPage = page
-      this.getData(page)
+      this.getData()
     },
     handleHot(id, hot, index) {
       let me = this
@@ -110,11 +118,15 @@ export default {
         me.list[index].hot = hot
       })
     },
-    getData(page) {
+    getData() {
       let me = this
-      me.getListData('/admin/subject/list', page, me.searchParam, (data, total) => {
+      me.getListData('/admin/subject/list', me.currentPage, me.searchParam, (data, total) => {
         me.total = total
         me.list = data
+        if(me.currentPage > 1 && me.list.length == 0) {
+          me.currentPage --
+          me.getData()
+        }
       }, (param) => {
         if(param.hot === 1) {
           delete param.hot
@@ -135,7 +147,7 @@ export default {
           message: '删除成功',
           type: 'success'
         })
-        me.getData(1)
+        me.getData()
       })
     },
     edit(id) {

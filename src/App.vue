@@ -51,7 +51,7 @@
           </el-menu-item>
         </el-menu>
         <div id="contentWrap">
-          <keep-alive include="ArticleList,StudentList">
+          <keep-alive include="ArticleList,StudentList,subjectList">
             <router-view></router-view>
           </keep-alive>
         </div>
@@ -144,6 +144,7 @@ export default {
           type: 'success'
         })
         localStorage.removeItem("token")
+        localStorage.removeItem("createTime")
         location.reload()
       })
     },
@@ -156,6 +157,8 @@ export default {
             type: 'success'
           })
           localStorage.setItem("token",response.data.token)
+          localStorage.setItem("createTime",response.data.createTime)
+          
           this.$router.push('/article')
           location.reload()
         })

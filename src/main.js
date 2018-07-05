@@ -162,6 +162,14 @@ Vue.prototype.formatFullCreateTime = function(time) {
 
 const store = new Vuex.Store(storeConfig)
 
+if(localStorage.getItem("createTime")) {
+  let current = Date.parse(new Date())
+  if(current > Number(localStorage.getItem("createTime"))) {
+    localStorage.removeItem("token")
+    localStorage.removeItem("createTime")
+  }
+}
+
 Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
