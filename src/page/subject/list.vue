@@ -41,12 +41,12 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="250">
+          width="180">
           <template slot-scope="scope">
             <el-button type="warning" size="mini" plain v-if="scope.row.hot" @click="handleHot(scope.row.id, false, scope.$index)">取消推荐</el-button>
             <el-button type="success" size="mini" plain v-else @click="handleHot(scope.row.id, true, scope.$index)">设为推荐</el-button>
             <el-button type="primary" size="mini" plain @click="edit(scope.row.id)">编辑</el-button>
-            <el-button type="danger" size="mini" @click="remove(scope.row.id)" plain>删除</el-button>
+            <!-- <el-button type="danger" size="mini" @click="remove(scope.row.id)" plain>删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>

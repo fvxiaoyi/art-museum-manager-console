@@ -13,10 +13,10 @@
     <div class="list-wrap">
       <el-table :data="list" border style="width: 96%">
         <el-table-column prop="name" label="校区名"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="150">
+        <el-table-column fixed="right" label="操作" width="80">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" plain @click="handleShowEditDialog(scope.row, scope.$index)">编辑</el-button>
-            <el-button type="danger" size="mini" @click="remove(scope.row.id)" plain>删除</el-button>
+            <!-- <el-button type="danger" size="mini" @click="remove(scope.row.id)" plain>删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>

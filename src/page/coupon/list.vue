@@ -35,14 +35,14 @@
             <span>{{ formatFullCreateTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="290">
+        <el-table-column fixed="right" label="操作" width="240">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" plain @click="remark(scope.row.id, scope.row.remark)">备注</el-button>
             <el-button type="warning" plain size="mini" disabled v-if="scope.row.callBack" >回访</el-button>
             <el-button type="warning" plain size="mini" @click="handleCallBack(scope.row.id, scope.$index)" v-else >回访</el-button>
             <el-button type="success" plain size="mini" disabled v-if="scope.row.archive" >使用</el-button>
             <el-button type="success" plain size="mini" @click="use(scope.row.id, scope.$index)" v-else >使用</el-button>
-            <el-button type="danger" plain size="mini" @click="remove(scope.row.id)">删除</el-button>
+            <!-- <el-button type="danger" plain size="mini" @click="remove(scope.row.id)">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>

@@ -39,12 +39,12 @@
             <span>{{ formatCreateTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="220">
+        <el-table-column fixed="right" label="操作" width="160">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" plain @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-button v-if="!scope.row.loginLock" type="warning" plain size="small" @click="lock(scope.row.id)">停用</el-button>
             <el-button v-if="scope.row.loginLock" type="success" plain size="small" @click="unlock(scope.row.id)">启用</el-button>
-            <el-button type="danger" plain size="small" @click="remove(scope.row.id)">删除</el-button>
+            <!-- <el-button type="danger" plain size="small" @click="remove(scope.row.id)">删除</el-button> -->
           </template>
         </el-table-column>
       </el-table>
