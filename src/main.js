@@ -1,5 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
@@ -86,7 +87,7 @@ axios.interceptors.request.use(
 // 'http://api.blcow.cn'
 Vue.prototype.post = function(url, param, cb) {
 	let me = this
-	me.$http.post('http://localhost:80' + url, param).then(function (response) {
+	me.$http.post('http://api.blcow.cn' + url, param).then(function (response) {
 		if(response.data.success) {
 			cb(response.data)
 		} else {
