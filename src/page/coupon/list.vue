@@ -104,7 +104,7 @@ export default {
           delete param['status']
         }
         if(param.phone) {
-          param.phone = `${param.phone}%`
+          param.phone = `%${param.phone}%`
         }
       })
     },
