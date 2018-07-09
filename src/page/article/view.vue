@@ -132,6 +132,9 @@ export default {
             message: '修改成功',
             type: 'success'
           })
+          this.post('/admin/art/get', {id: me.$route.params.id}, (response) => {
+            me.model = response.data
+          })
         })
       } else {
         this.post('/admin/art/add', me.model, (response) => {

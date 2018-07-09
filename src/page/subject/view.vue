@@ -85,6 +85,9 @@ export default {
             message: '修改成功',
             type: 'success'
           })
+          this.post('/admin/subject/get', {id: me.$route.params.id}, (response) => {
+            me.model = response.data
+          })
         })
       } else {
         this.post('/admin/subject/add', me.model, (response) => {
