@@ -31,6 +31,7 @@
         <el-table-column prop="studentLocalName" label="校区"></el-table-column>
         <el-table-column prop="monthStar" label="当月赞"></el-table-column>
         <el-table-column prop="totalStar" label="总赞数"></el-table-column>
+        <el-table-column prop="totalComment" label="评论数"></el-table-column>
         <el-table-column fixed="right" label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="info" size="mini" plain @click="comment(scope.row.id)">留言管理</el-button>
