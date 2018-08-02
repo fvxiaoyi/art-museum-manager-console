@@ -84,10 +84,10 @@ axios.interceptors.request.use(
   err => {
     return Promise.reject(err)
 })
-// 'http://api.blcow.cn'
+
 Vue.prototype.post = function(url, param, cb) {
 	let me = this
-	me.$http.post('http://api.blcow.cn' + url, param).then(function (response) {
+	me.$http.post('http://api.himeixue.com' + url, param).then(function (response) {
 		if(response.data.success) {
 			cb(response.data)
 		} else {

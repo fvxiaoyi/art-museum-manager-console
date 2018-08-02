@@ -59,7 +59,7 @@
 
     <el-dialog title="添加备注" :visible.sync="remarkDialogVisible" width="480px">
       <div>
-        <el-input v-model="model.remark" type="textarea" placeholder="请输入作品备注" style="width: 400px;" :rows="10"></el-input>
+        <el-input v-model="model.remark" type="textarea" placeholder="请输入备注" style="width: 400px;" :rows="10"></el-input>
         <el-button type="primary" style="margin-top:20px;" @click="submitRemark">提交</el-button>
       </div>
     </el-dialog>

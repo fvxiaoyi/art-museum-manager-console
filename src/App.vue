@@ -345,7 +345,7 @@ export default {
   }
 
   #menu {
-    height: 100%;
+
   }
 
   #menu .collapse {
@@ -363,7 +363,6 @@ export default {
   }
 
   #contentWrap {
-    
     padding: 10px;
     flex: 1;
   }
