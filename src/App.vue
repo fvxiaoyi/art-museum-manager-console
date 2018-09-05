@@ -41,7 +41,11 @@
             <i class="el-icon-edit"></i>
             <span slot="title">专题</span>
           </el-menu-item>
-          <el-menu-item index="5" @click="onMenuItemClick('star')">
+          <el-menu-item index="5" @click="onMenuItemClick('gift')">
+            <i class="el-icon-goods"></i>
+            <span slot="title">兑换奖品</span>
+          </el-menu-item>
+          <el-menu-item index="6" @click="onMenuItemClick('star')">
             <i class="el-icon-star-off"></i>
             <span slot="title">点赞查询</span>
           </el-menu-item>

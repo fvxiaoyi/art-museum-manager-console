@@ -87,7 +87,7 @@ axios.interceptors.request.use(
 
 Vue.prototype.post = function(url, param, cb) {
 	let me = this
-	me.$http.post('http://api.himeixue.com' + url, param).then(function (response) {
+	me.$http.post('http://127.0.0.1' + url, param).then(function (response) {
 		if(response.data.success) {
 			cb(response.data)
 		} else {
