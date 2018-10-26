@@ -6,67 +6,10 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import titleBar from './components/titleBar'
-import { 
-  Button,
-  Select,
-  Option,
-  Input,
-  Table,
-  TableColumn,
-  Pagination,
-  Dialog,
-  Form,
-  FormItem,
-  Upload,
-  Radio,
-  RadioGroup,
-  RadioButton,
-  Tooltip,
-  Checkbox,
-  CheckboxButton,
-  CheckboxGroup,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Menu,
-  MenuItem,
-  Message,
-  MessageBox,
-  DatePicker
-} from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+
 import storeConfig from './store/index'
 
-Vue.component(Button.name, Button)
-Vue.component(Select.name, Select)
-Vue.component(Option.name, Option)
-Vue.component(Input.name, Input)
-Vue.component(Table.name, Table)
-Vue.component(TableColumn.name, TableColumn)
-Vue.component(Pagination.name, Pagination)
-Vue.component(Dialog.name, Dialog)
-Vue.component(Form.name, Form)
-Vue.component(FormItem.name, FormItem)
-Vue.component(Upload.name, Upload)
-Vue.component(Radio.name, Radio)
-Vue.component(RadioGroup.name, RadioGroup)
-Vue.component(RadioButton.name, RadioButton)
-Vue.component(Tooltip.name, Tooltip)
-Vue.component(Checkbox.name, Checkbox)
-Vue.component(CheckboxButton.name, CheckboxButton)
-Vue.component(CheckboxGroup.name, CheckboxGroup)
-Vue.component(Dropdown.name, Dropdown)
-Vue.component(DropdownMenu.name, DropdownMenu)
-Vue.component(DropdownItem.name, DropdownItem)
-Vue.component(Menu.name, Menu)
-Vue.component(MenuItem.name, MenuItem)
-Vue.component(DatePicker.name, DatePicker)
 
-Vue.prototype.$msgbox = MessageBox;
-Vue.prototype.$alert = MessageBox.alert;
-Vue.prototype.$confirm = MessageBox.confirm;
-Vue.prototype.$prompt = MessageBox.prompt;
-Vue.prototype.$message = Message
 
 Vue.component('v-title-bar', titleBar)
 
