@@ -20,6 +20,7 @@
         <el-table-column prop="name" label="名字"></el-table-column>
         <el-table-column prop="age" label="年龄"></el-table-column>
         <el-table-column prop="phone" label="家长电话" width="180"></el-table-column>
+        <el-table-column prop="area" label="所在地区"></el-table-column>
         <el-table-column prop="introducer" label="推荐人" ></el-table-column>
         <el-table-column label="回访时间" width="150">
           <template slot-scope="scope">
