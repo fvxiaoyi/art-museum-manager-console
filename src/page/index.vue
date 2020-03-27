@@ -48,10 +48,21 @@
           <i class="el-icon-star-off"></i>
           <span slot="title">点赞查询</span>
         </el-menu-item>
-        <el-menu-item index="6" @click="onMenuItemClick('local')">
+        <el-menu-item index="7" @click="onMenuItemClick('local')">
           <i class="el-icon-location-outline"></i>
           <span slot="title">校区</span>
         </el-menu-item>
+        <el-submenu index="8">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>课程管理</span>
+          </template>
+          <el-menu-item index="8-1" @click="onMenuItemClick('onlinecourse/classlist')"><span slot="title">课程分类信息</span></el-menu-item>
+          <el-menu-item index="8-2"><span slot="title">免费课程</span></el-menu-item>
+          <el-menu-item index="8-3"><span slot="title">付费课程</span></el-menu-item>
+          <el-menu-item index="8-4"><span slot="title">打卡课程</span></el-menu-item>
+        </el-submenu>
+
       </el-menu>
       <div id="contentWrap">
         <keep-alive include="ArticleList,StudentList,subjectList">
@@ -79,7 +90,7 @@
 		},
 		data() {
       return {
-      	isCollapse: true,
+      	isCollapse: false,
 	      passwordDialogVisible: false,
 	      password: null
       }
@@ -144,11 +155,16 @@
 	        return '3'
 	      } else if(path === '/subject') {
 	        return '4'
-	      } else if(path === '/star') {
+	      } else if(path === '/gift') {
 	        return '5'
-	      } else if(path === '/local') {
+	      } else if(path === '/star') {
 	        return '6'
-	      } else {
+	      } else if(path === '/local') {
+          return '7'
+        } else if(path === '/onlinecourse/classlist') {
+          return '8-1'
+        } 
+        else {
 	        return ''
 	      }
 	    }

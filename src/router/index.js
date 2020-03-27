@@ -13,6 +13,8 @@ const subjectList = () => import('@/page/subject/list')
 const subjectView = () => import('@/page/subject/view')
 const starList = () => import('@/page/star/list')
 const giftList = () => import('@/page/gift/list')
+const onlineCourseFreeList = () => import('@/page/onlinecourse/freelist')
+const onlineCourseClassList = () => import('@/page/onlinecourse/classlist')
 
 
 Vue.use(Router)
@@ -28,6 +30,14 @@ let router = new Router({
       component: index,
       redirect: '/article',
       children: [
+        {
+          path: '/onlinecourse/classlist',
+          component: onlineCourseClassList
+        },
+        {
+          path: '/onlinecourse/freelist',
+          component: onlineCourseFreeList
+        },
         {
           path: '/article',
           component: articleList
