@@ -14,8 +14,10 @@ const subjectView = () => import('@/page/subject/view')
 const starList = () => import('@/page/star/list')
 const giftList = () => import('@/page/gift/list')
 const onlineCourseFreeList = () => import('@/page/onlinecourse/freelist')
+const onlineCourseUploadList = () => import('@/page/onlinecourse/uploadlist')
+const onlineCoursePaymentList = () => import('@/page/onlinecourse/paymentlist')
 const onlineCourseClassList = () => import('@/page/onlinecourse/classlist')
-
+const onlineCourseAdd = () => import('@/page/onlinecourse/add')
 
 Vue.use(Router)
 
@@ -37,6 +39,18 @@ let router = new Router({
         {
           path: '/onlinecourse/freelist',
           component: onlineCourseFreeList
+        },
+        {
+          path: '/onlinecourse/uploadlist',
+          component: onlineCourseUploadList
+        },
+        {
+          path: '/onlinecourse/paymentlist',
+          component: onlineCoursePaymentList
+        },
+        {
+          path: '/onlinecourse/add/:type',
+          component: onlineCourseAdd
         },
         {
           path: '/article',

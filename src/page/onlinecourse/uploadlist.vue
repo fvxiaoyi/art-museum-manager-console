@@ -1,6 +1,6 @@
 <template>
-	<div id="onlinecourse-freelist">
-		<v-title-bar>免费课程列表</v-title-bar>
+	<div id="onlinecourse-uploadlist">
+		<v-title-bar>打卡课程列表</v-title-bar>
 
     <div class="btn-wrap clear">
       <el-button class="left" type="primary" plain size="mini" @click="add">添加</el-button>
@@ -101,7 +101,7 @@
 	    	console.log(params)
 	    },
 	    add() {
-	    	this.$router.push('/onlinecourse/add/FREE')
+	    	this.$router.push('/onlinecourse/add/UPLOAD')
 	    }
     }
 	}

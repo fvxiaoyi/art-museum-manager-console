@@ -49,7 +49,7 @@
       >
     </el-pagination>
 
-    <el-dialog title="添加" :visible.sync="addDialogVisible" width="30%">
+    <el-dialog title="添加" :visible.sync="addDialogVisible" width="350px">
       <el-select v-model="model.courseType" placeholder="课程分类" size="mini" style="width:300px; margin-bottom: 10px;">
         <el-option v-for="item in courseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
       </el-select>
@@ -60,7 +60,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="修改" :visible.sync="editDialogVisible" width="30%">
+    <el-dialog title="修改" :visible.sync="editDialogVisible" width="350px">
       <el-select disabled v-model="editModel.courseType" placeholder="课程分类" size="mini" style="width:300px; margin-bottom: 10px;">
         <el-option v-for="item in courseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
       </el-select>
@@ -127,6 +127,12 @@
 	      this.currentPage = 1
 	      this.getData()
 	    },
+      handleRefresh() {
+        let me = this
+        this.searchParam = {}
+        this.currentPage = 1
+        this.getData()
+      },
       formatCourseType(type) {
         if(type === 'FREE') {
           return '免费课程'
@@ -188,6 +194,11 @@
 </script>
 
 <style scoped>
+
+  .btn-wrap .right {
+    margin-right: 4%;
+  }
+
   .list-wrap, .btn-wrap {
     margin-bottom: 12px;
   }

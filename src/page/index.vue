@@ -58,9 +58,9 @@
             <span>课程管理</span>
           </template>
           <el-menu-item index="8-1" @click="onMenuItemClick('onlinecourse/classlist')"><span slot="title">课程分类信息</span></el-menu-item>
-          <el-menu-item index="8-2"><span slot="title">免费课程</span></el-menu-item>
-          <el-menu-item index="8-3"><span slot="title">付费课程</span></el-menu-item>
-          <el-menu-item index="8-4"><span slot="title">打卡课程</span></el-menu-item>
+          <el-menu-item index="8-2" @click="onMenuItemClick('onlinecourse/freelist')"><span slot="title">免费课程</span></el-menu-item>
+          <el-menu-item index="8-3" @click="onMenuItemClick('onlinecourse/paymentlist')"><span slot="title">付费课程</span></el-menu-item>
+          <el-menu-item index="8-4" @click="onMenuItemClick('onlinecourse/uploadlist')"><span slot="title">打卡课程</span></el-menu-item>
         </el-submenu>
 
       </el-menu>
@@ -163,6 +163,12 @@
           return '7'
         } else if(path === '/onlinecourse/classlist') {
           return '8-1'
+        } else if(path === '/onlinecourse/freelist' || path === '/onlinecourse/add/FREE') {
+          return '8-2'
+        } else if(path === '/onlinecourse/uploadlist' || path === '/onlinecourse/add/UPLOAD') {
+          return '8-2'
+        } else if(path === '/onlinecourse/paymentlist' || path === '/onlinecourse/add/PAYMENT') {
+          return '8-2'
         } 
         else {
 	        return ''
