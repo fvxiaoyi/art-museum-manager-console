@@ -20,6 +20,10 @@ const onlineCourseClassList = () => import('@/page/onlinecourse/classlist')
 const onlineCourseAdd = () => import('@/page/onlinecourse/add')
 const onlineCourseCatalogueUpload = () => import('@/page/onlinecourse/upload')
 
+const rewardUploadList = () => import('@/page/reward/uploadlist')
+const rewardFreeList = () => import('@/page/reward/freelist')
+
+const orderList = () => import('@/page/order/list')
 
 Vue.use(Router)
 
@@ -34,6 +38,18 @@ let router = new Router({
       component: index,
       redirect: '/article',
       children: [
+        {
+          path: '/order/list',
+          component: orderList
+        },
+        {
+          path: '/reward/freeList',
+          component: rewardFreeList
+        },
+        {
+          path: '/reward/uploadlist',
+          component: rewardUploadList
+        },
         {
           path: '/onlinecourse/classlist',
           component: onlineCourseClassList
@@ -121,12 +137,12 @@ let router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if(to.path !== '/login') {
+  /*if(to.path !== '/login') {
     let token = localStorage.getItem("token")
     if(!token) {
       next('/login')
     } 
-  }
+  }*/
   next()
 })
 

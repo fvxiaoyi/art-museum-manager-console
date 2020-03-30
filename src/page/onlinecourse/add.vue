@@ -6,7 +6,7 @@
       <span v-else>添加付费课程</span>
     </v-title-bar>
 
-    <el-form label-width="110px" size="small">
+    <el-form label-width="150px" label-position="right" size="small">
       <el-form-item label="课程封面简介" required>
         <el-upload class="avatar-uploader" action="" :show-file-list="false" :http-request="uploadCover">
           <div v-if="model.coverFileId" class="img-wrap" @click.stop="coverImgMaskVisible=!coverImgMaskVisible">
@@ -46,6 +46,17 @@
             :value="item.id">
           </el-option>
         </el-select>
+      </el-form-item>
+
+      <el-form-item label="课程价格(元)" v-if="type === 'PAYMENT'" required>
+        <el-input-number v-model="model.amount" :precision="1" :min="0" ></el-input-number>
+      </el-form-item>
+
+      <el-form-item label="在册人员是否免费" v-if="type === 'PAYMENT'" required>
+        <el-radio-group v-model="model.studentFree" style="margin-right: 10px;">
+          <el-radio :label="false">否</el-radio>
+          <el-radio :label="true">是</el-radio>
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item label="奖励次数" v-if="type === 'UPLOAD'" required>
@@ -136,7 +147,9 @@
           catalogue: [],
           activity: false,
           rewardCount: 0,
-          discountAmount: 0
+          discountAmount: 0,
+          amount: 0,
+          studentFree: false
         },
         catalogueModel: {},
         editCatalogueModel: {

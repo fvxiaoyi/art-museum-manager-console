@@ -54,7 +54,7 @@
         </el-menu-item>
         <el-submenu index="8">
           <template slot="title">
-            <i class="el-icon-location"></i>
+            <i class="el-icon-monitor"></i>
             <span>课程管理</span>
           </template>
           <el-menu-item index="8-1" @click="onMenuItemClick('onlinecourse/classlist')"><span slot="title">课程分类信息</span></el-menu-item>
@@ -63,6 +63,19 @@
           <el-menu-item index="8-4" @click="onMenuItemClick('onlinecourse/uploadlist')"><span slot="title">打卡课程</span></el-menu-item>
         </el-submenu>
 
+        <el-submenu index="9">
+          <template slot="title">
+            <i class="el-icon-trophy"></i>
+            <span>奖励管理</span>
+          </template>
+          <el-menu-item index="9-1" @click="onMenuItemClick('reward/uploadlist')"><span slot="title">打卡奖励</span></el-menu-item>
+          <el-menu-item index="9-2" @click="onMenuItemClick('reward/freelist')"><span slot="title">助力奖励</span></el-menu-item>
+        </el-submenu>
+
+        <el-menu-item index="10" @click="onMenuItemClick('order/list')">
+          <i class="el-icon-shopping-bag-1"></i>
+          <span slot="title">订单查询</span>
+        </el-menu-item>
       </el-menu>
       <div id="contentWrap">
         <keep-alive include="ArticleList,StudentList,subjectList">
@@ -240,7 +253,7 @@
   }
 
   .el-menu-vertical:not(.el-menu--collapse) {
-    width: 160px;
+    width: 200px;
     min-height: 400px;
   }
 
