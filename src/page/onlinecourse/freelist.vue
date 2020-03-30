@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="250">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" plain @click="edit(scope.row)">编辑</el-button>
+            <el-button type="primary" size="mini" plain @click="edit(scope.row.id)">编辑</el-button>
             <el-button type="danger" size="mini" @click="remove(scope.row.id)" plain>删除</el-button>
           </template>
         </el-table-column>
@@ -76,7 +76,10 @@
       	}],
       	searchParam: {
       	},
-      	list: [],
+      	list: [{
+          id: 1,
+          name: "test"
+        }],
       	total: 0,
       	currentPage: 1
       }
@@ -102,7 +105,10 @@
 	    },
 	    add() {
 	    	this.$router.push('/onlinecourse/add/FREE')
-	    }
+	    },
+      edit(id) {
+        this.$router.push(`/onlinecourse/edit/FREE/${id}`)
+      }
     }
 	}
 </script>

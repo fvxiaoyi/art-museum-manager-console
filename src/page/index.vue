@@ -247,6 +247,7 @@
   #contentWrap {
     padding: 10px;
     flex: 1;
+    overflow: scroll;
   }
 
 </style>

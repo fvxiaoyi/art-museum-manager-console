@@ -18,6 +18,8 @@ const onlineCourseUploadList = () => import('@/page/onlinecourse/uploadlist')
 const onlineCoursePaymentList = () => import('@/page/onlinecourse/paymentlist')
 const onlineCourseClassList = () => import('@/page/onlinecourse/classlist')
 const onlineCourseAdd = () => import('@/page/onlinecourse/add')
+const onlineCourseCatalogueUpload = () => import('@/page/onlinecourse/upload')
+
 
 Vue.use(Router)
 
@@ -51,6 +53,14 @@ let router = new Router({
         {
           path: '/onlinecourse/add/:type',
           component: onlineCourseAdd
+        },
+        {
+          path: '/onlinecourse/edit/:type/:id',
+          component: onlineCourseAdd
+        },
+        {
+          path: '/onlinecourse/catalogue/upload/:id',
+          component: onlineCourseCatalogueUpload
         },
         {
           path: '/article',
