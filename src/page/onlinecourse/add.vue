@@ -69,7 +69,7 @@
         
       </el-form-item>
 
-      <el-form-item label="折扣价(元)" v-if="model.activity" required>
+      <el-form-item label="折扣价(元)" v-if="model.activity && type === 'PAYMENT'" required>
         <el-input-number v-model="model.discountAmount" :precision="1" :step="0.1"></el-input-number>
       </el-form-item>
 
@@ -78,7 +78,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-table :data="model.catalogue" border style="width: 50%">
+        <el-table :data="model.catalogues" border style="width: 50%">
           <el-table-column prop="name" label="章节名称"></el-table-column>
           <el-table-column prop="videoName" label="视频名称"></el-table-column>
           <el-table-column fixed="right" label="操作">
@@ -93,7 +93,7 @@
       <el-form-item>
         <el-button type="primary" @click="back">返回</el-button>
         <el-button type="success" @click="submit">提交</el-button>
-        <el-button type="success" @click="saveAndUpload">上传视频</el-button>
+        <el-button type="success" v-if="id" @click="saveAndUpload">上传视频</el-button>
       </el-form-item>
     </el-form>
 
@@ -126,7 +126,13 @@
 <script>
 	export default {
 		created() {
-      console.log(this.$route.params)
+      this.getCourseClass()
+      let id = this.$route.params.id
+      if(id) {
+        this.post('/admin/onlinecourse/free/get', {id}, (response) => {
+          this.model = response.data
+        })
+      }
 		},
 		data() {
       return {
@@ -144,7 +150,7 @@
           descFileId: null,
           descImgUrl: null,
           descImgThumbnailUrl: null,
-          catalogue: [],
+          catalogues: [],
           activity: false,
           rewardCount: 0,
           discountAmount: 0,
@@ -159,8 +165,31 @@
       }
     },
     methods: {
+      submit() {
+        let me = this
+        if(this.$route.params.id) {
+          this.post('/admin/onlinecourse/free/maintain', me.model, (response) => {
+            me.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+          })
+        } else {
+          this.post('/admin/onlinecourse/free/add', me.model, (response) => {
+            me.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            me.$router.push(`/onlinecourse/edit/FREE/${response.data.id}`)
+          })
+        }
+        
+      },
+      getCourseClass() {
+        this.post('/admin/onlinecourse/class/all', {courseType: 'FREE'}, (response) => this.courseClass = response.data)
+      },
       back() {
-        this.$router.go(-1)
+        this.$router.push('/onlinecourse/freelist')
       },
       deleteCover() {
         this.model.coverFileId = null
@@ -194,26 +223,26 @@
       },
       addCatalogue() {
         let me = this
-        this.model.catalogue.push({
+        this.model.catalogues.push({
           name: me.catalogueModel.name
         })
         this.catalogueModel.name = null
         this.addCatalogueVisible = false
       },
       handleEditCatalogueVisible(index, row) {
-        this.editCatalogueModel.name = this.model.catalogue[index].name
+        this.editCatalogueModel.name = this.model.catalogues[index].name
         this.editCatalogueModel.index = index
         this.editCatalogueVisible = true
       },
       editCatalogue() {
-        let m = this.model.catalogue[this.editCatalogueModel.index]
+        let m = this.model.catalogues[this.editCatalogueModel.index]
         m.name = this.editCatalogueModel.name
         this.editCatalogueModel.name = null
         this.editCatalogueModel.index = null
         this.editCatalogueVisible = false
       },
       removeCatalogue(index, row) {
-        this.model.catalogue.splice(index, 1)
+        this.model.catalogues.splice(index, 1)
       },
       saveAndUpload() {
         //TODO save
@@ -223,6 +252,9 @@
     computed: {
       type() {
         return this.$route.params.type
+      },
+      id() {
+        return this.$route.params.id
       }
     }
 	}

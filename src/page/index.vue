@@ -93,19 +93,61 @@
         <el-button type="primary" @click="changePassword">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="上传视频进度" :visible.sync="uploadProcessDialogVisible" width="30%">
+      <el-progress :text-inside="true" :stroke-width="26" :percentage="percentage"></el-progress>
+      <span slot="footer" class="dialog-footer">
+        <!-- <el-button @click="dialogVisible = false">隐藏</el-button> -->
+      </span>
+    </el-dialog>
+
 	</div>
 </template>
 
 <script>
+  import SockJS from 'sockjs-client'
+  import Stomp from 'stompjs'
+
 	export default {
 		created() {
-
+      let socket = new SockJS(process.env.BASE_URL + '/ws'),
+          me = this
+      this.stompClient = Stomp.over(socket);
+      this.stompClient.connect({}, function (frame) {
+        me.stompClient.subscribe('/user/admin/queue/upload.progress', function (message) {
+          if(!me.uploadProcessDialogVisible) {
+            me.uploadProcessDialogVisible = true
+          }
+          let progress = JSON.parse(message.body).progress
+          if(progress == 100) {
+            me.uploadProcessDialogVisible = false
+            me.percentage = 0
+            me.$message({
+              message: '上传成功',
+              type: 'success'
+            })
+          } else {
+            if(me.percentage < progress) {
+              me.percentage = progress
+            }
+          }
+          
+        })
+      })
 		},
+    beforeDestory() {
+      if(this.stompClient) {
+        this.stompClient.disconnect();
+      }
+    },
 		data() {
       return {
+        percentage: 0,
+        uploadProcessDialogVisible: false,
       	isCollapse: false,
 	      passwordDialogVisible: false,
-	      password: null
+	      password: null,
+        stompClient: null
       }
     },
     methods: {

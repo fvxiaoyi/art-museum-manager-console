@@ -34,7 +34,7 @@ let router = new Router({
       component: login
     },
     {
-      path: '/index',
+      path: '/',
       component: index,
       redirect: '/article',
       children: [
@@ -137,12 +137,12 @@ let router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  /*if(to.path !== '/login') {
+  if(to.path !== '/login') {
     let token = localStorage.getItem("token")
     if(!token) {
       next('/login')
     } 
-  }*/
+  }
   next()
 })
 
