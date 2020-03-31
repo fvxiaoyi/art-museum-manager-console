@@ -1,9 +1,11 @@
 <template>
 	<div id="onlinecourse-add">
 		<v-title-bar>
-      <span v-if="type === 'FREE'">添加免费课程</span>  
-      <span v-else-if="type === 'UPLOAD'">添加打卡课程</span>
-      <span v-else>添加付费课程</span>
+      <span v-if="id">编辑</span>
+      <span v-else>添加</span>
+      <span v-if="type === 'FREE'">免费课程</span>  
+      <span v-else-if="type === 'UPLOAD'">打卡课程</span>
+      <span v-else>付费课程</span>
     </v-title-bar>
 
     <el-form label-width="150px" label-position="right" size="small">
@@ -65,7 +67,7 @@
 
       <el-form-item label="助力活动" v-if="type === 'FREE' || type === 'PAYMENT'" required>
         <el-checkbox v-model="model.activity"></el-checkbox>
-        <el-date-picker style="margin-left: 30px;" v-if="model.activity" size="mini" v-model="model.activityExpiryDate" type="date" placeholder="选择限时活动截止时间"></el-date-picker>
+        <el-date-picker style="margin-left: 30px;" v-if="model.activity" size="mini" v-model="model.activityExpiryDate" type="datetime" placeholder="选择限时活动截止时间"></el-date-picker>
         
       </el-form-item>
 
@@ -129,7 +131,7 @@
       this.getCourseClass()
       let id = this.$route.params.id
       if(id) {
-        this.post('/admin/onlinecourse/free/get', {id}, (response) => {
+        this.post(`/admin/onlinecourse/${this.type.toLocaleLowerCase()}/get`, {id}, (response) => {
           this.model = response.data
         })
       }
@@ -168,28 +170,36 @@
       submit() {
         let me = this
         if(this.$route.params.id) {
-          this.post('/admin/onlinecourse/free/maintain', me.model, (response) => {
+          this.post(`/admin/onlinecourse/${this.type.toLocaleLowerCase()}/maintain`, me.model, (response) => {
             me.$message({
               message: '修改成功',
               type: 'success'
             })
           })
         } else {
-          this.post('/admin/onlinecourse/free/add', me.model, (response) => {
+          this.post(`/admin/onlinecourse/${this.type.toLocaleLowerCase()}/add`, me.model, (response) => {
             me.$message({
               message: '添加成功',
               type: 'success'
             })
-            me.$router.push(`/onlinecourse/edit/FREE/${response.data.id}`)
+            me.$router.push(`/onlinecourse/edit/${this.type}/${response.data.id}`)
           })
         }
-        
       },
       getCourseClass() {
-        this.post('/admin/onlinecourse/class/all', {courseType: 'FREE'}, (response) => this.courseClass = response.data)
+        let me = this
+        this.post('/admin/onlinecourse/class/all', {courseType: me.type}, (response) => this.courseClass = response.data)
       },
       back() {
-        this.$router.push('/onlinecourse/freelist')
+        let me = this
+        if(me.type === 'FREE') {
+          this.$router.push('/onlinecourse/freelist')
+        } else if(me.type === 'UPLOAD') {
+          this.$router.push('/onlinecourse/uploadlist')
+        } else if(me.type === 'PAYMENT') {
+          this.$router.push('/onlinecourse/paymentlist')
+        }
+        
       },
       deleteCover() {
         this.model.coverFileId = null
@@ -246,7 +256,7 @@
       },
       saveAndUpload() {
         //TODO save
-        this.$router.push(`/onlinecourse/catalogue/upload/${this.model.id}`)
+        this.$router.push(`/onlinecourse/catalogue/upload/${this.type}/${this.$route.params.id}`)
       }
     },
     computed: {

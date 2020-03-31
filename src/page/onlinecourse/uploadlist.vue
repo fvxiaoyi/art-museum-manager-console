@@ -5,11 +5,10 @@
     <div class="btn-wrap clear">
       <el-button class="left" type="primary" plain size="mini" @click="add">添加</el-button>
       <div class="right">
-        <el-select v-model="searchParam.courseType" placeholder="课程分类" size="mini" style="width:160px;">
-          <el-option v-for="item in courseTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        <el-select v-model="searchParam.courseClassId" placeholder="课程分类" size="mini" style="width:160px;">
+          <el-option v-for="item in courseClass" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <el-input size="mini" v-model="searchParam.name" placeholder="输入课程类别识别搜索" style="width: 250px;"></el-input>
-        <el-date-picker size="mini" v-model="searchParam.expireDate" type="date" placeholder="选择限时活动截止时间"></el-date-picker>
         <el-button type="info" size="mini" plain @click="handleSearch" >查找</el-button>
         <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
@@ -22,11 +21,7 @@
         style="width: 96%">
         <el-table-column prop="name" label="课程名称"></el-table-column>
         <el-table-column prop="courseClassName" label="课程分类"></el-table-column>
-        <el-table-column label="限时活动时间">
-          <template slot-scope="scope">
-            <span>{{ formatFullCreateTime(scope.row.createTime) }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="rewardCount" label="奖励次数"></el-table-column>
         <el-table-column label="创建时间">
           <template slot-scope="scope">
             <span>{{ formatFullCreateTime(scope.row.createTime) }}</span>
@@ -58,7 +53,7 @@
 	export default {
 		created() {
 			let me = this
-			// course class
+			this.getCourseClass()
 	    this.getData()
 		},
 		data() {
@@ -82,6 +77,9 @@
       }
     },
     methods: {
+      getCourseClass() {
+        this.post('/admin/onlinecourse/class/all', {courseType: 'UPLOAD'}, (response) => this.courseClass = response.data)
+      },
     	handleRefresh() {
         let me = this
         this.searchParam = {}
@@ -93,18 +91,42 @@
 	      this.getData()
 	    },
 	    getData() {
-	    	let params = {}
-	    	Object.assign(params, this.searchParam)
-	    	if(params.expireDate) {
-	    		params.expireDate = params.expireDate.getTime()
-	    	}
-	    	console.log(params)
+	    	let me = this
+        me.getListData('/admin/onlinecourse/upload/list', me.currentPage, me.searchParam, (data, total) => {
+          me.total = total
+          me.list = data
+          if(me.currentPage > 1 && me.list.length == 0) {
+            me.currentPage --
+            me.getData()
+          }
+        }, (param) => {
+          if(param.name) {
+            param.name = `%${param.name}%`
+          }
+        })
 	    },
 	    add() {
 	    	this.$router.push('/onlinecourse/add/UPLOAD')
 	    },
       edit(id) {
         this.$router.push(`/onlinecourse/edit/UPLOAD/${id}`)
+      },
+      remove(id) {
+        this.$confirm('此操作将删除该课程,删除后该课程下的视频信息将被清空, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let me = this
+          this.post('/admin/onlinecourse/upload/remove', {id}, (response) => {
+            me.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            me.getData()
+          })
+        }).catch(() => {       
+        })
       }
     }
 	}

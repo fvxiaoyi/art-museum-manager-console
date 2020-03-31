@@ -42,7 +42,7 @@ export default {
       formData.append('file', this.$refs.upload.uploadFiles[0].raw)
       formData.append('id', this.id)
       formData.append('catalogueId', this.catalogueId)
-      this.post('/admin/onlinecourse/free/addCatalogueVideo', formData, (response) => {
+      this.post(`/admin/onlinecourse/${this.type.toLocaleLowerCase()}/addCatalogueVideo`, formData, (response) => {
         me.dialogVisible = false
         me.catalogueId = null
         me.getData()
@@ -50,7 +50,7 @@ export default {
     },
     getData() {
       let id = this.$route.params.id
-      this.post('/admin/onlinecourse/free/getCatalogues', {id}, (response) => {
+      this.post(`/admin/onlinecourse/${this.type.toLocaleLowerCase()}/getCatalogues`, {id}, (response) => {
         this.catalogues = response.data
       })
     },
@@ -68,7 +68,7 @@ export default {
           type: 'warning'
         }).then(() => {
           let me = this
-          this.post('/admin/onlinecourse/free/removeCatalogueVideo', {id: me.id, catalogueId: row.id}, (response) => {
+          this.post(`/admin/onlinecourse/${this.type.toLocaleLowerCase()}/removeCatalogueVideo`, {id: me.id, catalogueId: row.id}, (response) => {
             me.$message({
               message: '删除成功',
               type: 'success'
@@ -77,11 +77,12 @@ export default {
           })
         }).catch(() => {       
       })
-      
-      
     }
   },
   computed: {
+    type() {
+      return this.$route.params.type
+    },
     id() {
       return this.$route.params.id
     }

@@ -75,7 +75,7 @@ let router = new Router({
           component: onlineCourseAdd
         },
         {
-          path: '/onlinecourse/catalogue/upload/:id',
+          path: '/onlinecourse/catalogue/upload/:type/:id',
           component: onlineCourseCatalogueUpload
         },
         {

@@ -218,12 +218,12 @@
           return '7'
         } else if(path === '/onlinecourse/classlist') {
           return '8-1'
-        } else if(path === '/onlinecourse/freelist' || path === '/onlinecourse/add/FREE') {
+        } else if(path === '/onlinecourse/freelist') {
           return '8-2'
-        } else if(path === '/onlinecourse/uploadlist' || path === '/onlinecourse/add/UPLOAD') {
-          return '8-2'
-        } else if(path === '/onlinecourse/paymentlist' || path === '/onlinecourse/add/PAYMENT') {
-          return '8-2'
+        } else if(path === '/onlinecourse/uploadlist') {
+          return '8-4'
+        } else if(path === '/onlinecourse/paymentlist') {
+          return '8-3'
         } 
         else {
 	        return ''

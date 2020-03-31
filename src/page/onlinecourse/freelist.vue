@@ -9,7 +9,7 @@
           <el-option v-for="item in courseClass" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
         <el-input size="mini" v-model="searchParam.name" placeholder="输入课程类别识别搜索" style="width: 250px;"></el-input>
-        <el-date-picker size="mini" v-model="searchParam.activityExpiryDate" type="date" placeholder="选择限时活动截止时间"></el-date-picker>
+        <el-date-picker size="mini" v-model="searchParam.activityExpiryDate" type="datetime" placeholder="选择限时活动截止时间"></el-date-picker>
         <el-button type="info" size="mini" plain @click="handleSearch" >查找</el-button>
         <el-button type="info" icon="el-icon-refresh" plain size="mini" @click="handleRefresh" style="margin: 0;"></el-button>
       </div>
@@ -58,7 +58,7 @@
 	export default {
 		created() {
 			let me = this
-      this.getCourseClass();
+      this.getCourseClass()
 	    this.getData()
 		},
 		data() {
