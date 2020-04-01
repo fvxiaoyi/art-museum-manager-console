@@ -1,6 +1,3 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-
 const login = () => import('@/page/login')
 const index = () => import('@/page/index')
 const articleList = () => import('@/page/article/list')
@@ -25,9 +22,9 @@ const rewardFreeList = () => import('@/page/reward/freelist')
 
 const orderList = () => import('@/page/order/list')
 
-Vue.use(Router)
+Vue.use(VueRouter)
 
-let router = new Router({
+let router = new VueRouter({
   routes: [
     {
       path: '/login',

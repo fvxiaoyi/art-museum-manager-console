@@ -94,10 +94,12 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="上传视频进度" :visible.sync="uploadProcessDialogVisible" width="30%">
-      <el-progress :text-inside="true" :stroke-width="26" :percentage="percentage"></el-progress>
+    <el-dialog title="上传视频进度" :visible.sync="uploadProcessDialogVisible" :close-on-click-modal="false" width="30%">
+      
+      <div v-if="percentage === 100" style="color: #67C23A;""><i class="el-icon-success"></i> 上传成功</div>
+      <el-progress :text-inside="true" :stroke-width="26" :percentage="percentage" v-else></el-progress>
       <span slot="footer" class="dialog-footer">
-        <!-- <el-button @click="dialogVisible = false">隐藏</el-button> -->
+        <el-button @click="handleUploadSucess" v-if="percentage === 100">确定</el-button>
       </span>
     </el-dialog>
 
@@ -105,7 +107,6 @@
 </template>
 
 <script>
-  import SockJS from 'sockjs-client'
   import Stomp from 'stompjs'
 
 	export default {
@@ -119,19 +120,9 @@
             me.uploadProcessDialogVisible = true
           }
           let progress = JSON.parse(message.body).progress
-          if(progress == 100) {
-            me.uploadProcessDialogVisible = false
-            me.percentage = 0
-            me.$message({
-              message: '上传成功',
-              type: 'success'
-            })
-          } else {
-            if(me.percentage < progress) {
-              me.percentage = progress
-            }
+          if(me.percentage < progress) {
+            me.percentage = progress
           }
-          
         })
       })
 		},
@@ -151,6 +142,10 @@
       }
     },
     methods: {
+      handleUploadSucess() {
+        this.uploadProcessDialogVisible = false
+        this.percentage = 0
+      },
 	    onCollapseClick() {
 	      this.isCollapse = !this.isCollapse
 	    },
