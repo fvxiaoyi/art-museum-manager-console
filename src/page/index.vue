@@ -76,6 +76,10 @@
           <i class="el-icon-shopping-bag-1"></i>
           <span slot="title">订单查询</span>
         </el-menu-item>
+        <el-menu-item index="11" @click="onMenuItemClick('review/list')">
+          <i class="el-icon-shopping-bag-1"></i>
+          <span slot="title">评审管理</span>
+        </el-menu-item>
       </el-menu>
       <div id="contentWrap">
         <keep-alive include="ArticleList,StudentList,subjectList">

@@ -4,7 +4,6 @@ import 'babel-polyfill'
 import App from './App'
 import router from './router'
 import titleBar from './components/titleBar'
-import storeConfig from './store/index'
 
 Vue.component('v-title-bar', titleBar)
 

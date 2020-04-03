@@ -21,6 +21,8 @@ const rewardUploadList = () => import('@/page/reward/uploadlist')
 const rewardFreeList = () => import('@/page/reward/freelist')
 
 const orderList = () => import('@/page/order/list')
+const reviewList = () => import('@/page/review/list')
+const reviewView = () => import('@/page/review/view')
 
 Vue.use(VueRouter)
 
@@ -35,6 +37,14 @@ let router = new VueRouter({
       component: index,
       redirect: '/article',
       children: [
+        {
+          path: '/review/list',
+          component: reviewList
+        },
+        {
+          path: '/review/view/:id',
+          component: reviewView
+        },
         {
           path: '/order/list',
           component: orderList
@@ -134,12 +144,12 @@ let router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if(to.path !== '/login') {
+  /*if(to.path !== '/login') {
     let token = localStorage.getItem("token")
     if(!token) {
       next('/login')
     } 
-  }
+  }*/
   next()
 })
 
